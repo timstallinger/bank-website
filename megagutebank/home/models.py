@@ -54,6 +54,6 @@ class BankStatement(models.Model):
 
 
 class BankStatementConsistsOf(models.Model):
-    bank_statement = models.ForeignKey(BankStatement)
-    transaction = models.ForeignKey(Transaction)
+    bank_statement = models.ForeignKey(BankStatement, on_delete=models.CASCADE)
+    transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE)
 
