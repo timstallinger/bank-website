@@ -29,15 +29,26 @@
     <body>
         <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
             <img src="{% static 'images/logo.png' %}" width="50px">
-            <a class="navbar-brand" href="">Mega gute Bank</a>
+            <a class="navbar-brand" href="/">Mega gute Bank</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
-                    <a class="nav-item nav-link active" href="" id="nav-home">Home</a>
-                    <a class="nav-item nav-link" href="" id="nav-create">Neuen Bankaccount erstellen</a>
-                    <a class="nav-item nav-link" href="" id="nav-login">Einloggen</a>
+                <!-- if current page is home, set home link active-->
+                {% if request.path == '/' %}
+                    <a class="nav-item nav-link active" href="/" id="nav-home">Home</a>
+                    <a class="nav-item nav-link" href="/login/" id="nav-login">Einloggen</a>
+                    <a class="nav-item nav-link" href="/login/register/" id="nav-create">Neuen Bankaccount erstellen</a>
+                {% elif request.path == '/login/' %}
+                    <a class="nav-item nav-link" href="/" id="nav-home">Home</a>
+                    <a class="nav-item nav-link active" href="/login/" id="nav-login">Einloggen</a>
+                    <a class="nav-item nav-link" href="/login/register/" id="nav-create">Neuen Bankaccount erstellen</a>
+                {% elif request.path == '/login/register/' %}
+                    <a class="nav-item nav-link" href="/" id="nav-home">Home</a>
+                    <a class="nav-item nav-link" href="/login/" id="nav-login">Einloggen</a>
+                    <a class="nav-item nav-link active" href="/login/register/" id="nav-create">Neuen Bankaccount erstellen</a>
+                {% endif %}
                 </div>
             </div>
         </nav>
