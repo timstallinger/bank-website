@@ -1,5 +1,6 @@
 # Mega Gute Bank
-- Datenbank für die Mega Gute Bank:
+- [CSS template](https://bootswatch.com/lux/)
+- zukünftige Datenbank für die Mega Gute Bank:
 ```
 DATABASES = {
     'default': {
