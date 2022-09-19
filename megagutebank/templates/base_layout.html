@@ -2,6 +2,18 @@
 
 <!DOCTYPE html>
 <html>
+
+    {% block stylecontent %}
+    <style>
+        .foot {
+            position: relative;
+            bottom: 0px;
+            left: 0px;
+            right: 0px;
+        }
+    </style>
+    {% endblock %}
+
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,10 +21,6 @@
         <title>Mega Gute Bank</title>
         
         <!-- CSS FRAMEWORKS REQUIRED -->
-        
-        {% block stylecontent %}
-
-        {% endblock %}
         
         <link rel="stylesheet" href="/static/bootstrap.css">
 
