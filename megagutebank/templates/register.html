@@ -1,0 +1,40 @@
+{% extends 'base_layout.html' %}
+
+{% block stylecontent %}
+    <style>
+        h1 {
+            border-bottom: 1px solid;
+        }
+        h4 {
+            font-weight: 400;
+        }
+        a:hover {
+            text-decoration: none;
+        }
+        
+        .foot {
+            position: absolute;
+            bottom: 0px;
+            left: 0px;
+            right: 0px;
+        }
+    </style>
+{% endblock %}
+        
+
+{% block bodycontent %}    
+    <div class="container text-center">
+        <h1>Willkommen bei Mega Gute Bank</h1>
+        <h4><em>Uns können Sie vertrauen.</em></h4>
+    </div>
+    
+    <br>
+    
+    <div class="container">
+        <a href=""><button class="btn btn-primary btn-block" id="acc"><i class="fa fa-user"></i> Neuen Bankaccount erstellen</button>
+        <br> 
+        <a href=""><button class="btn btn-danger btn-block" id="sign_in"><i class="fa fa-sign-in"></i> Einloggen</button></a>
+    </div>
+    
+    <br>
+{% endblock %}
