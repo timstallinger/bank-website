@@ -12,6 +12,15 @@ class Bank(models.Model):
     name = models.CharField(max_length=30)
 
 
+class Employee(models.Model):
+    eid = models.IntegerField(primary_key=True)
+
+
+class Request(models.Model):
+    user = models.ForeignKey("User", on_delete=models.CASCADE)
+    employee = models.ForeignKey("Employee", default=None, on_delete=models.PROTECT)
+
+
 class Account(models.Model):
     name = models.CharField(max_length=30)
     amount = models.FloatField(default=0)
@@ -32,6 +41,17 @@ class SavingsAccount(Account):
 
 class CreditCardAccount(Account):
     cardnumber = models.CharField(max_length=16, primary_key=True)
+
+
+class DebitCard(models.Model):
+    id = models.IntegerField(primary_key=True)
+    pin = models.IntegerField()
+    state = models.IntegerField()
+    expiration_date = models.DateField(default=timezone.now)
+
+
+class CertificateOfDepositsAccount(Account):
+    duration = models.IntegerField()
 
 
 class Card(models.Model):
@@ -68,20 +88,36 @@ class BankStatement(models.Model):
 class User(models.Model):
     uid = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=30)
+    surname = models.CharField(max_length=30)
+    email = models.EmailField(max_length=50)
     password = models.CharField(max_length=30)
 
 
 
 
 
-#class BankStatementTransaction(models.Model):
-#    bank_statement = models.ForeignKey(BankStatement, on_delete=models.CASCADE)
-#    transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE)
+class BankStatementTransaction(models.Model):
+    bank_statement = models.ForeignKey(BankStatement, on_delete=models.CASCADE)
+    transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE)
 
 
-#class AccountBankStatement(models.Model):
-#    account = models.ForeignKey(Account, on_delete=models.CASCADE)
-#    bank_statement = models.ForeignKey(BankStatement, on_delete=models.CASCADE)
+class SavingsAccountBankStatement(models.Model):
+    account = models.ForeignKey("SavingsAccount", on_delete=models.CASCADE)
+    bank_statement = models.ForeignKey(BankStatement, on_delete=models.CASCADE)
+
+
+class TransactionAccountBankStatement(models.Model):
+    account = models.ForeignKey("TransactionAccount", on_delete=models.CASCADE)
+    bank_statement = models.ForeignKey(BankStatement, on_delete=models.CASCADE)
+
+
+class AccountBankStatement(models.Model):
+    account = models.ForeignKey("SavingsAccount", on_delete=models.CASCADE)
+    bank_statement = models.ForeignKey(BankStatement, on_delete=models.CASCADE)
+
+
+#class StandingOrders(models.Model):
+
 
 
 #class AccountTransaction(models.Model):
@@ -104,7 +140,12 @@ class User(models.Model):
 #    Account = models.ForeignKey(Account, on_delete=models.CASCADE)
 
 
-#class BankUser(models.Model):
-#    Bank = models.ForeignKey(Bank, on_delete=models.CASCADE)
-#    User = models.ForeignKey(User, on_delete=models.CASCADE)
+class BankUser(models.Model):
+    Bank = models.ForeignKey(Bank, on_delete=models.CASCADE)
+    User = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
+#class Contact(models.Model):
+#    user1 = models.ForeignKey(User, on_delete=models.CASCADE)
+#    user2 = models.ForeignKey(User, on_delete=models.CASCADE)
 
