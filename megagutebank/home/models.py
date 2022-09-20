@@ -1,9 +1,9 @@
 from pyexpat import model
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 # Create your models here.
-
 
 class Bank(models.Model):
     balance = models.FloatField()
@@ -19,7 +19,9 @@ class Employee(models.Model):
 
 
 class Account(models.Model):
+    aid = models.IntegerField(primary_key=True, auto_created=True)
     name = models.CharField(max_length=30)
+    owner = models.ForeignKey(User, on_delete=models.RESTRICT)
     amount = models.FloatField(default=0)
     interestrate = models.FloatField(default=0)
     status = models.IntegerField(default=0)
@@ -30,20 +32,19 @@ class Account(models.Model):
 
 
 class TransactionAccount(Account):
-    iban = models.CharField(max_length=22, primary_key=True)
+    iban = models.CharField(max_length=22, unique=True)
     overdraft = models.CharField(max_length=30, default=0)
 
 
 class SavingsAccount(Account):
-    iban = models.CharField(max_length=22, primary_key=True)
+    iban = models.CharField(max_length=22, unique=True)
 
 
 class CreditCardAccount(Account):
-    cardnumber = models.CharField(max_length=16, primary_key=True)
+    cardnumber = models.CharField(max_length=16, unique=True)
 
 
 class DebitCard(models.Model):
-    id = models.IntegerField(primary_key=True)
     pin = models.IntegerField()
     state = models.IntegerField()
     expiration_date = models.DateField(default=timezone.now)
@@ -83,12 +84,6 @@ class BankStatement(models.Model):
     time = models.DateTimeField(default=timezone.now)
 
 
-class User(models.Model):
-    uid = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=30)
-    surname = models.CharField(max_length=30)
-    email = models.EmailField(max_length=50)
-    password = models.CharField(max_length=30)
 
 
 
