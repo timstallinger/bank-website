@@ -29,12 +29,12 @@
     </div>
     
     <br>
-    
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Log In</button>
-    </form>
-    
+    <div class="container">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button class="btn btn-danger btn-block" type="submit" id="sign_in"><i class="fa fa-sign-in"></i> Einloggen</button>
+        </form>
+    </div>
     <br>
 {% endblock %}
