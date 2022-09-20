@@ -36,18 +36,26 @@
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
                 <!-- if current page is home, set home link active-->
-                {% if request.path == '/' %}
-                    <a class="nav-item nav-link active" href="/" id="nav-home">Home</a>
-                    <a class="nav-item nav-link" href="/accounts/login/" id="nav-login">Einloggen</a>
-                    <a class="nav-item nav-link" href="/accounts/register/" id="nav-create">Neuen Bankaccount erstellen</a>
-                {% elif request.path == '/accounts/login/' %}
-                    <a class="nav-item nav-link" href="/" id="nav-home">Home</a>
-                    <a class="nav-item nav-link active" href="/accounts/login/" id="nav-login">Einloggen</a>
-                    <a class="nav-item nav-link" href="/accounts/register/" id="nav-create">Neuen Bankaccount erstellen</a>
-                {% elif request.path == '/accounts/register/' %}
-                    <a class="nav-item nav-link" href="/" id="nav-home">Home</a>
-                    <a class="nav-item nav-link" href="/accounts/login/" id="nav-login">Einloggen</a>
-                    <a class="nav-item nav-link active" href="/accounts/register/" id="nav-create">Neuen Bankaccount erstellen</a>
+                {% if not user.is_authenticated %}
+                    {% if request.path == '/' %}
+                        <a class="nav-item nav-link active" href="/" id="nav-home">Home</a>
+                        <a class="nav-item nav-link" href="/accounts/login/" id="nav-login">Einloggen</a>
+                        <a class="nav-item nav-link" href="/accounts/register/" id="nav-create">Neuen Bankaccount erstellen</a>
+                    {% elif request.path == '/accounts/login/' %}
+                        <a class="nav-item nav-link" href="/" id="nav-home">Home</a>
+                        <a class="nav-item nav-link active" href="/accounts/login/" id="nav-login">Einloggen</a>
+                        <a class="nav-item nav-link" href="/accounts/register/" id="nav-create">Neuen Bankaccount erstellen</a>
+                    {% elif request.path == '/accounts/register/' %}
+                        <a class="nav-item nav-link" href="/" id="nav-home">Home</a>
+                        <a class="nav-item nav-link" href="/accounts/login/" id="nav-login">Einloggen</a>
+                        <a class="nav-item nav-link active" href="/accounts/register/" id="nav-create">Neuen Bankaccount erstellen</a>
+                    {% endif %}
+                {% else %}
+                    {% if request.path == '/' %}
+                        <a class="nav-item nav-link active" href="/" id="nav-home">Home</a>
+                        <a class="nav-item nav-link" href="/accounts/logout/" id="nav-logout">Ausloggen</a>
+                        <a class="nav-item nav-link" href="/accounts/profile/" id="nav-profile">Profil</a>
+                    {% endif %}
                 {% endif %}
                 </div>
             </div>
