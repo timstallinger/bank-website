@@ -1,112 +1,34 @@
 {% extends 'base_layout.html' %}
-
 {% block bodycontent %}    
     <div class="container text-center">
-        <h1>Willkommen bei Mega Gute Bank</h1>
+        <h1>Registrierungsseite für MGB</h1>
         <h4><em>Uns können Sie vertrauen.</em></h4>
     </div>
     
     <br>
-
-    <form>
-        <fieldset>
-          <legend>Legend</legend>
-          <div class="row">
-            <label for="InputName" class="form-label mt-4">Name</label>
+    <div class="container">
+    <form method="POST">
+      {% csrf_token %}
+      {% for field in form %}
+        {% if forloop.counter0|divisibleby:2 %}
+          <div class="form-group row">
             <div class="col">
-              <input type="text" class="form-control" placeholder="Vorname" id="firstname">
+            <label class="form-label mt-4" for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {{ field }}
             </div>
+        {% else %}
             <div class="col">
-              <input type="text" class="form-control" placeholder="Nachname" id="lastname">
+            <label class="form-label mt-4" for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {{ field }}
             </div>
           </div>
-          <div class="form-group">
-            <label for="InputEmail" class="form-label mt-4">E-Mail</label>
-            <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
-          </div>
-          <div class="form-group">
-            <label for="InputPassword" class="form-label mt-4">Passwort</label>
-            <select class="form-select" id="exampleSelect1">
+        {% endif %}
+      {% endfor %}
+      <div class="row">
+        <button type="submit" class="btn btn-primary" style="margin-top: 20px">Registrieren</button>
 
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="exampleSelect2" class="form-label mt-4">Example multiple select</label>
-            <select multiple="" class="form-select" id="exampleSelect2">
-              <option>1</option>
-              <option>2</option>
-              <option>3</option>
-              <option>4</option>
-              <option>5</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="exampleTextarea" class="form-label mt-4">Example textarea</label>
-            <textarea class="form-control" id="exampleTextarea" rows="3"></textarea>
-          </div>
-          <div class="form-group">
-            <label for="formFile" class="form-label mt-4">Default file input example</label>
-            <input class="form-control" type="file" id="formFile">
-          </div>
-          <fieldset class="form-group">
-            <legend class="mt-4">Radio buttons</legend>
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked="">
-              <label class="form-check-label" for="optionsRadios1">
-                Option one is this and that—be sure to include why it's great
-              </label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
-              <label class="form-check-label" for="optionsRadios2">
-                Option two can be something else and selecting it will deselect option one
-              </label>
-            </div>
-            <div class="form-check disabled">
-              <input class="form-check-input" type="radio" name="optionsRadios" id="optionsRadios3" value="option3" disabled="">
-              <label class="form-check-label" for="optionsRadios3">
-                Option three is disabled
-              </label>
-            </div>
-          </fieldset>
-          <fieldset class="form-group">
-            <legend class="mt-4">Checkboxes</legend>
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-              <label class="form-check-label" for="flexCheckDefault">
-                Default checkbox
-              </label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked="">
-              <label class="form-check-label" for="flexCheckChecked">
-                Checked checkbox
-              </label>
-            </div>
-          </fieldset>
-          <fieldset class="form-group">
-            <legend class="mt-4">Switches</legend>
-            <div class="form-check form-switch">
-              <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
-              <label class="form-check-label" for="flexSwitchCheckDefault">Default switch checkbox input</label>
-            </div>
-            <div class="form-check form-switch">
-              <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked="">
-              <label class="form-check-label" for="flexSwitchCheckChecked">Checked switch checkbox input</label>
-            </div>
-          </fieldset>
-          <fieldset class="form-group">
-            <legend class="mt-4">Ranges</legend>
-              <label for="customRange1" class="form-label">Example range</label>
-              <input type="range" class="form-range" id="customRange1">
-              <label for="disabledRange" class="form-label">Disabled range</label>
-              <input type="range" class="form-range" id="disabledRange" disabled="">
-              <label for="customRange3" class="form-label">Example range</label>
-              <input type="range" class="form-range" min="0" max="5" step="0.5" id="customRange3">
-          </fieldset>
-          <button type="submit" class="btn btn-primary">Submit</button>
-        </fieldset>
-      </form>
-    
-    <br>
+      </div>
+    </form>
+  </div>
+
 {% endblock %}

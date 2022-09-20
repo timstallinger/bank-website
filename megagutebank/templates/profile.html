@@ -1,0 +1,86 @@
+{% extends 'base_layout.html' %}
+{% load static %}
+
+{% block stylecontent %}
+    <style>
+        #NameInfo {
+          margin-top: 25px;
+        }
+        #AddressContainer{
+          display: flex;
+          justify-content: space-between;
+          margin-top: 25px;
+          margin-left: 0;
+        }
+        #PersonalText{
+          display: flex;
+          justify-content: space-between;
+          white-space: pre;
+          margin-left: 0;
+          margin-right: 50px;
+        }
+        .name h1 {
+          font-size: 20px;
+        }
+        .name h2 {
+          font-size: 10px;
+        }
+    </style>
+{% endblock %}
+{% block bodycontent %}
+    <div class="container text-center">
+        <h1>Kundenprofil für MGB</h1>
+        <h4><em>Uns können Sie vertrauen.</em></h4>
+    </div>
+
+    <br>
+
+    <form>
+            <div class="row text-center" style="margin-right: 0; justify-content: center; margin-top: 20px">
+              <div class="img">
+                  <img src="{% static 'images/avatar.png' %}" id=avatar width="220px" style="border-radius: 50%">
+                </div>
+              <div class="infos">
+                <div class="name" id="NameInfo">
+                  <h1>Max Mustermann</h1>
+                  <h2>@mustermann</h2>
+                </div>
+              </div>
+              </div>
+      <div class="row text-center" style="margin-top: 30px">
+        <div class="col" style="margin-left: 0; margin-top: 20px">
+          <h3>Persönliche Daten</h3>
+          <div class="card-body" style="margin-top: 20px;margin-left: 0">
+            <p>Max Mustermann</p>
+            <p>Geburtsdatum: 03.10.1989</p>
+            <p>Staudingerweg 9</p>
+            <p>55128 Mainz</p>
+            <p>Tel.: 06721 4825241</p>
+            <p>E-Mail: maxmustermann@gmail.com</p>
+          </div>
+          </div>
+
+        <div class="col" style="margin-left: 0; margin-top: 20px">
+          <h3>Meine Konten</h3>
+          <div class="card-body" style="margin-left: 0; margin-top: 20px">
+            <p>Konto 1</p>
+          </div>
+        </div>
+              <!--
+              <div class="container" id="AddressContainer">
+                <div class="address" id="AddressInfo">
+                  <h3>Persönliche Daten</h3>
+                  <p class="text-body" id="PersonalText">
+                    Max Mustermann
+                    Staudingerweg 9
+                    55128 Mainz
+                  </p>
+                </div>
+                -->
+
+            </div>
+
+        </fieldset>
+      </form>
+    <br>
+{% endblock %}
