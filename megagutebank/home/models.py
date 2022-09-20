@@ -73,6 +73,7 @@ class User(models.Model):
 
 
 
+
 #class BankStatementTransaction(models.Model):
 #    bank_statement = models.ForeignKey(BankStatement, on_delete=models.CASCADE)
 #    transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE)
