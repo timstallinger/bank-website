@@ -30,11 +30,11 @@
     
     <br>
     
-    <div class="container">
-        <a href=""><button class="btn btn-primary btn-block" id="acc"><i class="fa fa-user"></i> Neuen Bankaccount erstellen</button></a>
-        <br> 
-        <a href=""><button class="btn btn-danger btn-block" id="sign_in"><i class="fa fa-sign-in"></i> Einloggen</button></a>
-    </div>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Log In</button>
+    </form>
     
     <br>
 {% endblock %}
