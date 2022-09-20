@@ -1,5 +1,5 @@
 from django.contrib.auth import login, authenticate
-from .forms import SignUpForm
+from .forms import SignUpForm, KontoForm
 from django.shortcuts import render, redirect
 
 def signup(request):
@@ -15,3 +15,13 @@ def signup(request):
     else:
         form = SignUpForm()
     return render(request, 'register.html', {'form': form})
+
+def konto_create(request):
+    if request.method == 'POST':
+        form = KontoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form = KontoForm()
+    return render(request, 'konto_create.html', {'form': form})
