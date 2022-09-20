@@ -10,17 +10,22 @@
     <form method="POST">
       {% csrf_token %}
       {% for field in form %}
-        <div class="row">
-          <label class="form-label mt-4">{{ field.label_tag }}</label>
-            {{ field }}
-            {{ field.help_text }}
-          {% for error in field.errors %}
-            <p style="color: red">{{ error }}</p>
-          {% endfor %}
-        </div>
+        {% if forloop.counter0|divisibleby:2 %}
+          <div class="form-group row">
+            <div class="col">
+            <label class="form-label mt-4" for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {{ field }}
+            </div>
+        {% else %}
+            <div class="col">
+            <label class="form-label mt-4" for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {{ field }}
+            </div>
+          </div>
+        {% endif %}
       {% endfor %}
       <div class="row">
-        <button type="submit" class="btn btn-danger" style="margin-top: 20px">Registrieren</button>
+        <button type="submit" class="btn btn-primary" style="margin-top: 20px">Registrieren</button>
 
       </div>
     </form>
