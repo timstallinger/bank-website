@@ -16,15 +16,14 @@ class Employee(models.Model):
     eid = models.IntegerField(primary_key=True)
 
 
-class Request(models.Model):
-    user = models.ForeignKey("User", on_delete=models.CASCADE)
-    employee = models.ForeignKey("Employee", default=None, on_delete=models.PROTECT)
 
 
 class Account(models.Model):
     name = models.CharField(max_length=30)
     amount = models.FloatField(default=0)
     interestrate = models.FloatField(default=0)
+    status = models.IntegerField(default=0)
+    employee = models.ForeignKey(Employee, default=None, on_delete=models.RESTRICT)
 
     class Meta:
         abstract = True
@@ -69,8 +68,7 @@ class Transaction(models.Model):
     id = models.IntegerField(primary_key=True)
     time_of_transaction = models.DateTimeField(default=timezone.now)
     amount = models.FloatField()
-    source_account = models.CharField(max_length=22)
-    destination_account = models.CharField(max_length=22)
+    account = models.CharField(max_length=22)
 
 
 #class Transaction(models.Model):
@@ -140,9 +138,7 @@ class AccountBankStatement(models.Model):
 #    Account = models.ForeignKey(Account, on_delete=models.CASCADE)
 
 
-class BankUser(models.Model):
-    Bank = models.ForeignKey(Bank, on_delete=models.CASCADE)
-    User = models.ForeignKey(User, on_delete=models.CASCADE)
+
 
 
 #class Contact(models.Model):
