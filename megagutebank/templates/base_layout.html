@@ -38,16 +38,16 @@
                 <!-- if current page is home, set home link active-->
                 {% if request.path == '/' %}
                     <a class="nav-item nav-link active" href="/" id="nav-home">Home</a>
-                    <a class="nav-item nav-link" href="/login/" id="nav-login">Einloggen</a>
-                    <a class="nav-item nav-link" href="/login/register/" id="nav-create">Neuen Bankaccount erstellen</a>
-                {% elif request.path == '/login/' %}
+                    <a class="nav-item nav-link" href="/accounts/login/" id="nav-login">Einloggen</a>
+                    <a class="nav-item nav-link" href="/accounts/register/" id="nav-create">Neuen Bankaccount erstellen</a>
+                {% elif request.path == '/accounts/login/' %}
                     <a class="nav-item nav-link" href="/" id="nav-home">Home</a>
-                    <a class="nav-item nav-link active" href="/login/" id="nav-login">Einloggen</a>
-                    <a class="nav-item nav-link" href="/login/register/" id="nav-create">Neuen Bankaccount erstellen</a>
-                {% elif request.path == '/login/register/' %}
+                    <a class="nav-item nav-link active" href="/accounts/login/" id="nav-login">Einloggen</a>
+                    <a class="nav-item nav-link" href="/accounts/register/" id="nav-create">Neuen Bankaccount erstellen</a>
+                {% elif request.path == '/accounts/register/' %}
                     <a class="nav-item nav-link" href="/" id="nav-home">Home</a>
-                    <a class="nav-item nav-link" href="/login/" id="nav-login">Einloggen</a>
-                    <a class="nav-item nav-link active" href="/login/register/" id="nav-create">Neuen Bankaccount erstellen</a>
+                    <a class="nav-item nav-link" href="/accounts/login/" id="nav-login">Einloggen</a>
+                    <a class="nav-item nav-link active" href="/accounts/register/" id="nav-create">Neuen Bankaccount erstellen</a>
                 {% endif %}
                 </div>
             </div>
