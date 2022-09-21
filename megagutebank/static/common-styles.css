@@ -1,19 +1,69 @@
-@import url('https://fonts.googleapis.com/css?family=Titillium+Web');
+@import url("https://fonts.googleapis.com/css?family=Titillium+Web");
 h1 {
-    border-bottom: 1px solid;
+  border-bottom: 1px solid;
 }
 h4 {
-    font-weight: 400;
+  font-weight: 400;
 }
-html, body {
-    font-family: 'Titillium Web', sans-serif;
-    font-size: 16px;
-    color: #000;
-    background-color: #fff;
-    margin: 0;
-    padding: 0;
-    min-height: 100%;
-    height: 100%;
-    width: 100%;
-    overflow-x: hidden;
+#NameInfo {
+  margin-top: 25px;
+}
+#AddressContainer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 25px;
+  margin-left: 0;
+}
+#PersonalText {
+  display: flex;
+  justify-content: space-between;
+  white-space: pre;
+  margin-left: 0;
+  margin-right: 50px;
+}
+#sq {
+  background: #ffffff;
+  width: 450px;
+  height: 100px;
+  margin-right: 0;
+  margin-top: 20px;
+  vertical-align: middle;
+  justify-content: center;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px #c5c5c5;
+}
+#row_card {
+  vertical-align: middle;
+  margin-top: 10px;
+}
+#col_card {
+  line-height: 2px;
+}
+#expand_container {
+  margin-bottom: 10px;
+}
+#button3 {
+  background: #ffffff;
+  width: 450px;
+  height: 100px;
+  margin-right: 0;
+  margin-top: 20px;
+  vertical-align: middle;
+  justify-content: center;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px #c5c5c5;
+  border: 0;
+}
+html,
+body {
+  font-family: "Titillium Web", sans-serif;
+  font-size: 16px;
+  color: #000;
+  background-color: #fff;
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
 }
