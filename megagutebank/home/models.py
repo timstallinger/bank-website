@@ -32,12 +32,12 @@ class Account(models.Model):
 
 
 class TransactionAccount(Account):
-    iban = models.CharField(max_length=22, unique=True)
+    iban = models.CharField(max_length=34, unique=True)
     overdraft = models.CharField(max_length=30, default=0)
 
 
 class SavingsAccount(Account):
-    iban = models.CharField(max_length=22, unique=True)
+    iban = models.CharField(max_length=34, unique=True)
 
 
 class CreditCardAccount(Account):
