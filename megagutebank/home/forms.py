@@ -1,10 +1,10 @@
 from django import forms
 from django.forms import ModelForm
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
 import random
+import datetime
 
-from .models import Account, SavingsAccount
+from .models import Person, SavingsAccount
 
 class SignUpForm(UserCreationForm):
     vorname = forms.CharField(max_length=30, required=True,
@@ -19,17 +19,34 @@ class SignUpForm(UserCreationForm):
                 'class': 'form-control',
                 'placeholder': 'Nachnamen eingeben',
             }))
+    username = forms.CharField(max_length=30, required=True,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Benutzernamen eingeben',
+            }))
     email = forms.EmailField(max_length=254,
         widget=forms.TextInput(
             attrs={
                 'class': 'form-control',
                 'placeholder': 'E-Mail Adresse eingeben',
             }))
-    username = forms.CharField(max_length=30, required=True,
+    phone = forms.CharField(max_length=30, required=True,
         widget=forms.TextInput(
             attrs={
                 'class': 'form-control',
-                'placeholder': 'Benutzernamen eingeben',
+                'placeholder': 'Telefonnummer eingeben',
+            }))
+    address = forms.CharField(max_length=30, required=True,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Adresse eingeben',
+            }))
+    birthday = forms.DateField(initial=datetime.date.today, 
+    widget=forms.widgets.DateInput(
+        attrs={
+            'type': 'date', 'class': 'form-control','min': '1900-01-01', 'max': datetime.date.today() - datetime.timedelta(days=18*365)
             }))
     password1 = forms.CharField(max_length=30, required=True, help_text='Mindestens 8 Zeichen lang und darf nicht zu einfach sein.',
         widget=forms.PasswordInput(
@@ -44,8 +61,8 @@ class SignUpForm(UserCreationForm):
                 'placeholder': 'Passwort bestätigen',
             }))
     class Meta:
-        model = User
-        fields = ('vorname', 'nachname', 'email', 'username', 'password1', 'password2', )
+        model = Person
+        fields = ('vorname', 'nachname', 'email', 'phone', 'username', 'birthday', 'password1', 'password2', )
 
     def save(self, commit=True):
         user = super(SignUpForm, self).save(commit=False)
