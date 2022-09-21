@@ -21,7 +21,7 @@ class Employee(models.Model):
 class Account(models.Model):
     aid = models.IntegerField(primary_key=True, auto_created=True)
     name = models.CharField(max_length=30)
-    owner = models.ForeignKey(User, on_delete=models.RESTRICT)
+    owner = models.ForeignKey(User, on_delete=models.RESTRICT, null=True)
     amount = models.FloatField(default=0)
     interestrate = models.FloatField(default=0)
     status = models.IntegerField(default=0)
@@ -90,23 +90,23 @@ class BankStatement(models.Model):
 
 
 class BankStatementTransaction(models.Model):
-    bank_statement = models.ForeignKey(BankStatement, on_delete=models.CASCADE)
-    transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE)
+    bank_statement = models.ForeignKey(BankStatement, on_delete=models.CASCADE, null=True)
+    transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE, null=True)
 
 
 class SavingsAccountBankStatement(models.Model):
-    account = models.ForeignKey("SavingsAccount", on_delete=models.CASCADE)
-    bank_statement = models.ForeignKey(BankStatement, on_delete=models.CASCADE)
+    account = models.ForeignKey("SavingsAccount", on_delete=models.CASCADE, null=True)
+    bank_statement = models.ForeignKey(BankStatement, on_delete=models.CASCADE, null=True)
 
 
 class TransactionAccountBankStatement(models.Model):
-    account = models.ForeignKey("TransactionAccount", on_delete=models.CASCADE)
-    bank_statement = models.ForeignKey(BankStatement, on_delete=models.CASCADE)
+    account = models.ForeignKey("TransactionAccount", on_delete=models.CASCADE, null=True)
+    bank_statement = models.ForeignKey(BankStatement, on_delete=models.CASCADE, null=True)
 
 
 class AccountBankStatement(models.Model):
-    account = models.ForeignKey("SavingsAccount", on_delete=models.CASCADE)
-    bank_statement = models.ForeignKey(BankStatement, on_delete=models.CASCADE)
+    account = models.ForeignKey("SavingsAccount", on_delete=models.CASCADE, null=True)
+    bank_statement = models.ForeignKey(BankStatement, on_delete=models.CASCADE, null=True)
 
 
 #class StandingOrders(models.Model):
