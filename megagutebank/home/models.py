@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 
+
 class Bank(models.Model):
     balance = models.FloatField()
     profit = models.FloatField()
@@ -15,6 +16,7 @@ class Bank(models.Model):
 class Employee(models.Model):
     eid = models.IntegerField(primary_key=True)
 
+
 class Person(User):
     profile_picture = models.ImageField(upload_to='profile_pictures', blank=True, null=True)
     address = models.CharField(max_length=100)
@@ -24,45 +26,29 @@ class Person(User):
 
 
 class Account(models.Model):
-    aid = models.IntegerField(primary_key=True, auto_created=True)
+    # aid = models.IntegerField(primary_key=True, auto_created=True)
+    iban = models.CharField(primary_key=True, max_length=34)
+    type = models.IntegerField()
     name = models.CharField(max_length=30)
     owner = models.ForeignKey(User, on_delete=models.RESTRICT, null=True)
     amount = models.FloatField(default=0)
-    interestrate = models.FloatField(default=0)
+    interest = models.FloatField(default=0)
+    negative_interest = models.FloatField(default=0.073)
     status = models.IntegerField(default=0)
     employee = models.ForeignKey(Employee, default=None, on_delete=models.RESTRICT, null=True)
-
-    class Meta:
-        abstract = True
-
-
-class TransactionAccount(Account):
-    iban = models.CharField(max_length=34, unique=True)
-    overdraft = models.CharField(max_length=30, default=0)
-
-
-class SavingsAccount(Account):
-    iban = models.CharField(max_length=34, unique=True)
-
-
-class CreditCardAccount(Account):
-    cardnumber = models.CharField(max_length=16, unique=True)
 
 
 class DebitCard(models.Model):
     pin = models.IntegerField()
-    state = models.IntegerField()
+    state = models.BooleanField(default=1)
     expiration_date = models.DateField(default=timezone.now)
-
-
-class CertificateOfDepositsAccount(Account):
-    duration = models.IntegerField()
 
 
 class Card(models.Model):
     id = models.CharField(max_length=30, primary_key=True)
     cvv = models.IntegerField()
     pin = models.IntegerField()
+    state = models.BooleanField(default=1)
     expiration_date = models.DateField()
 
 
@@ -72,21 +58,14 @@ class Tan(models.Model):
 
 class Transaction(models.Model):
     id = models.IntegerField(primary_key=True, auto_created=True)
+    standing_order = models.BooleanField(default=0)
+    period_of_time = models.TimeField
     time_of_transaction = models.DateTimeField(default=timezone.now)
     amount = models.FloatField()
-    senderkonto = models.CharField(max_length=22)
+    sending_account = models.CharField(max_length=34)
     sender = models.ForeignKey(User, on_delete=models.RESTRICT, null=True)
-    zielkonto = models.CharField(max_length=22)
-    verwendungszweck = models.CharField(max_length=140, null=True)
-    approved = models.BooleanField(default=False)
-    approved_by = models.ForeignKey(Employee, on_delete=models.RESTRICT, null=True)
-
-
-#class Transaction(models.Model):
-#    id = models.IntegerField(primary_key=True)
-#    time_of_transaction = models.DateTimeField(default=timezone.now)
-#    amount = models.FloatField()
-#    account = models.CharField(max_length=22)
+    receiving_account = models.CharField(max_length=34)
+    usage = models.CharField(max_length=140, null=True)
 
 
 class BankStatement(models.Model):
@@ -120,33 +99,3 @@ class AccountBankStatement(models.Model):
 
 
 #class StandingOrders(models.Model):
-
-
-
-#class AccountTransaction(models.Model):
-#    account = models.ForeignKey(Account, on_delete=models.CASCADE)
-#    transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE)
-
-
-#class AccountCard(models.Model):
-#    account = models.ForeignKey(Account, on_delete=models.CASCADE)
-#    card = models.ForeignKey(Card, on_delete=models.CASCADE)
-
-
-#class AccountTan(models.Model):
-#    account = models.ForeignKey(Account, on_delete=models.CASCADE)
-#    tan = models.ForeignKey(Tan, on_delete=models.CASCADE)
-
-
-#class UserAccount(models.Model):
-#    user = models.ForeignKey(User, on_delete=models.CASCADE)
-#    Account = models.ForeignKey(Account, on_delete=models.CASCADE)
-
-
-
-
-
-#class Contact(models.Model):
-#    user1 = models.ForeignKey(User, on_delete=models.CASCADE)
-#    user2 = models.ForeignKey(User, on_delete=models.CASCADE)
-
