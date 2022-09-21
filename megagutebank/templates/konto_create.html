@@ -1,0 +1,21 @@
+{% extends 'base_layout.html' %}
+{% block bodycontent %}    
+    <div class="container text-center">
+        <h1>Kontoerstellung bei MGB</h1>
+        <h4><em>Uns können Sie vertrauen.</em></h4>
+    </div>
+    <br>
+    <div class="container">
+    <form method="POST">
+      {% csrf_token %}
+      {% for field in form %}
+          <label class="form-label mt-4 row" for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+      {% endfor %}
+      <div class="row">
+        <button type="submit" class="btn btn-primary" style="margin-top: 20px">Erstellen</button>
+      </div>
+    </form>
+  </div>
+
+{% endblock %}
