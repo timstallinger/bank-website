@@ -1,5 +1,7 @@
 from django.contrib.auth import login, authenticate
-from .forms import SignUpForm, KontoForm
+
+from .models import SavingsAccount
+from .forms import SignUpForm, KontoForm, UberweisungForm
 from django.shortcuts import render, redirect
 
 def signup(request):
@@ -27,3 +29,18 @@ def konto_create(request):
     else:
         form = KontoForm(request.user)
     return render(request, 'konto_create.html', {'form': form})
+
+def konto_uberweisen(request):
+    if request.method == 'POST':
+        form = UberweisungForm(request.user, request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('user_profile')
+        else:
+            form = UberweisungForm(request.user)
+    else:
+        form = UberweisungForm(request.user)
+    # get all accounts of the user
+    accounts = SavingsAccount.objects.filter(owner=request.user)
+
+    return render(request, 'konto_uberweisen.html', {'form': form, 'accounts': accounts})

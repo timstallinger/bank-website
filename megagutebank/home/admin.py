@@ -3,6 +3,7 @@ from home.models import *
 
 admin.site.register(Bank)
 admin.site.register(SavingsAccount)
+admin.site.register(Person)
 admin.site.register(Employee)
 admin.site.register(TransactionAccount)
 admin.site.register(CreditCardAccount)

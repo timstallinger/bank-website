@@ -20,6 +20,7 @@ class Person(User):
     address = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=20, null=True)
     birthday = models.DateField()
+    contacts = models.ManyToManyField('self', blank=True)
 
 
 class Account(models.Model):
@@ -70,10 +71,13 @@ class Tan(models.Model):
 
 
 class Transaction(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.IntegerField(primary_key=True, auto_created=True)
     time_of_transaction = models.DateTimeField(default=timezone.now)
     amount = models.FloatField()
-    account = models.CharField(max_length=22)
+    senderkonto = models.CharField(max_length=22)
+    sender = models.ForeignKey(User, on_delete=models.RESTRICT, null=True)
+    zielkonto = models.CharField(max_length=22)
+    verwendungszweck = models.CharField(max_length=140, null=True)
 
 
 #class Transaction(models.Model):

@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 import random
 import datetime
 
-from .models import Person, SavingsAccount
+from .models import Person, SavingsAccount, Transaction
 
 class SignUpForm(UserCreationForm):
     vorname = forms.CharField(max_length=30, required=True,
@@ -115,6 +115,46 @@ class KontoForm(ModelForm):
         konto.iban = self.cleaned_data["konto_standort"] + str(random.randint(1000000000, 9999999999))
 
         konto.owner = self.user
+
+        if commit:
+            konto.save()
+        return konto
+
+class UberweisungForm(ModelForm):
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super(ModelForm, self).__init__(*args, **kwargs)
+    # amount of money to transfer
+    betrag = forms.DecimalField(max_digits=10, decimal_places=2, required=True,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Betrag eingeben',
+            }))
+    zielkonto = forms.CharField(max_length=30, required=True,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Zielkonto eingeben',
+            }))
+    verwendungszweck = forms.CharField(max_length=30, required=True,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Verwendungszweck eingeben',
+            }))
+    
+    class Meta:
+        model = Transaction
+        fields = ('betrag', 'zielkonto', 'verwendungszweck',)
+
+    def save(self, commit=True):
+        konto = super(UberweisungForm, self).save(commit=False)
+        konto.amount = self.cleaned_data["betrag"]
+        konto.verwendungszweck = self.cleaned_data["verwendungszweck"]
+        konto.sender = self.user
+        konto.senderkonto = self.cleaned_data["senderkonto"]
+        konto.receiver = self.cleaned_data["zielkonto"]
 
         if commit:
             konto.save()
