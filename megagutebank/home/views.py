@@ -18,10 +18,12 @@ def signup(request):
 
 def konto_create(request):
     if request.method == 'POST':
-        form = KontoForm(request.POST)
+        form = KontoForm(request.user, request.POST)
         if form.is_valid():
             form.save()
-            return redirect('home')
+            return redirect('user_profile')
+        else:
+            form = KontoForm(request.user)
     else:
-        form = KontoForm()
+        form = KontoForm(request.user)
     return render(request, 'konto_create.html', {'form': form})

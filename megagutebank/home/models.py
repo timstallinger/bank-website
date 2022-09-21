@@ -25,7 +25,7 @@ class Account(models.Model):
     amount = models.FloatField(default=0)
     interestrate = models.FloatField(default=0)
     status = models.IntegerField(default=0)
-    employee = models.ForeignKey(Employee, default=None, on_delete=models.RESTRICT)
+    employee = models.ForeignKey(Employee, default=None, on_delete=models.RESTRICT, null=True)
 
     class Meta:
         abstract = True
