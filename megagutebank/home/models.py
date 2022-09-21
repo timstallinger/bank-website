@@ -15,7 +15,11 @@ class Bank(models.Model):
 class Employee(models.Model):
     eid = models.IntegerField(primary_key=True)
 
-
+class Person(User):
+    profile_picture = models.ImageField(upload_to='profile_pictures', blank=True, null=True)
+    address = models.CharField(max_length=100)
+    phone_number = models.CharField(max_length=20, null=True)
+    birthday = models.DateField()
 
 
 class Account(models.Model):
