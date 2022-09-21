@@ -70,7 +70,8 @@ class Transaction(models.Model):
     receiving_account = models.CharField(max_length=34)
     receiving_name = models.CharField(max_length=30)
     usage = models.CharField(max_length=140, null=True)
-
+    approved = models.BooleanField(default=0)
+    approved_by = models.ForeignKey(Employee, on_delete=models.DO_NOTHING, null=True)
 
 class BankStatement(models.Model):
     id = models.IntegerField(primary_key=True)
