@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 import random
 import datetime
 
-from .models import Person, SavingsAccount, Transaction
+from .models import Person, Account, Transaction
 
 class SignUpForm(UserCreationForm):
     vorname = forms.CharField(max_length=30, required=True,
@@ -79,6 +79,11 @@ konto_typen = [
     ('girokonto', 'Girokonto'),
     ('kreditkartenkonto', 'Kreditkartenkonto'),
     ]
+typ_to_int = {
+            'sparkonto': 0,
+            'girokonto': 1,
+            'kreditkartenkonto': 2,
+        }
 konto_cntry = [
     ('DE', 'Deutschland'),
     ('CH', 'Schweiz'),
@@ -104,7 +109,7 @@ class KontoForm(ModelForm):
     }))
 
     class Meta:
-        model = SavingsAccount
+        model = Account
         fields = ('konto_name', 'konto_standort')
     def save(self, commit=True):
         konto = super(KontoForm, self).save(commit=False)
@@ -113,7 +118,8 @@ class KontoForm(ModelForm):
         konto.interestrate = 0
         # generate a random IBAN
         konto.iban = self.cleaned_data["konto_standort"] + str(random.randint(1000000000, 9999999999))
-
+        
+        konto.typ = typ_to_int[self.cleaned_data["konto_typ"]]
         konto.owner = self.user
 
         if commit:

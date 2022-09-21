@@ -3,8 +3,6 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 
-# Create your models here.
-
 
 class Bank(models.Model):
     balance = models.FloatField()
@@ -73,29 +71,3 @@ class BankStatement(models.Model):
     time = models.DateTimeField(default=timezone.now)
 
 
-
-
-
-
-
-class BankStatementTransaction(models.Model):
-    bank_statement = models.ForeignKey(BankStatement, on_delete=models.CASCADE, null=True)
-    transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE, null=True)
-
-
-class SavingsAccountBankStatement(models.Model):
-    account = models.ForeignKey("SavingsAccount", on_delete=models.CASCADE, null=True)
-    bank_statement = models.ForeignKey(BankStatement, on_delete=models.CASCADE, null=True)
-
-
-class TransactionAccountBankStatement(models.Model):
-    account = models.ForeignKey("TransactionAccount", on_delete=models.CASCADE, null=True)
-    bank_statement = models.ForeignKey(BankStatement, on_delete=models.CASCADE, null=True)
-
-
-class AccountBankStatement(models.Model):
-    account = models.ForeignKey("SavingsAccount", on_delete=models.CASCADE, null=True)
-    bank_statement = models.ForeignKey(BankStatement, on_delete=models.CASCADE, null=True)
-
-
-#class StandingOrders(models.Model):

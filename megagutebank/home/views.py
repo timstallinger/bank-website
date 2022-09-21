@@ -1,6 +1,6 @@
 from django.contrib.auth import login, authenticate
 
-from .models import SavingsAccount
+from .models import Account
 from .forms import SignUpForm, KontoForm, UberweisungForm
 from django.shortcuts import render, redirect
 
@@ -41,6 +41,6 @@ def konto_uberweisen(request):
     else:
         form = UberweisungForm(request.user)
     # get all accounts of the user
-    accounts = SavingsAccount.objects.filter(owner=request.user)
+    accounts = Account.objects.filter(owner=request.user)
 
     return render(request, 'konto_uberweisen.html', {'form': form, 'accounts': accounts})
