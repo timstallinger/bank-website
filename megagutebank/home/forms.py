@@ -148,12 +148,12 @@ class UberweisungForm(ModelForm):
         model = Transaction
         fields = ('betrag', 'zielkonto', 'verwendungszweck',)
 
-    def save(self, commit=True):
+    def save(self, request, commit=True):
         konto = super(UberweisungForm, self).save(commit=False)
         konto.amount = self.cleaned_data["betrag"]
         konto.verwendungszweck = self.cleaned_data["verwendungszweck"]
         konto.sender = self.user
-        konto.senderkonto = self.cleaned_data["senderkonto"]
+        konto.senderkonto =  request.POST.dict().get("senderkonto")
         konto.receiver = self.cleaned_data["zielkonto"]
 
         if commit:

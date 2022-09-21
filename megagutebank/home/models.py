@@ -78,6 +78,8 @@ class Transaction(models.Model):
     sender = models.ForeignKey(User, on_delete=models.RESTRICT, null=True)
     zielkonto = models.CharField(max_length=22)
     verwendungszweck = models.CharField(max_length=140, null=True)
+    approved = models.BooleanField(default=False)
+    approved_by = models.ForeignKey(Employee, on_delete=models.RESTRICT, null=True)
 
 
 #class Transaction(models.Model):
