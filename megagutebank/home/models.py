@@ -34,7 +34,7 @@ class Account(models.Model):
     interest = models.FloatField(default=0)
     negative_interest = models.FloatField(default=0.073)
     status = models.IntegerField(default=0)
-    employee = models.ForeignKey(Employee, default=None, on_delete=models.RESTRICT, null=True)
+    employee = models.ForeignKey(Employee, default=None, on_delete=models.DO_NOTHING, blank=True)
 
 
 class DebitCard(models.Model):

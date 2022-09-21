@@ -119,7 +119,7 @@ class KontoForm(ModelForm):
         # generate a random IBAN
         konto.iban = self.cleaned_data["konto_standort"] + str(random.randint(1000000000, 9999999999))
         
-        konto.typ = typ_to_int[self.cleaned_data["konto_typ"]]
+        konto.type = typ_to_int[self.cleaned_data["konto_typ"]]
         konto.owner = self.user
 
         if commit:

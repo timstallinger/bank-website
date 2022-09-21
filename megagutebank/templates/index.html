@@ -33,6 +33,33 @@
     
     <div class="container">
         {% if user.is_authenticated %}
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Überweisung</h5>
+                            <p class="card-text">Hier können Sie Geld überweisen.</p>
+                            <a href="/accounts/konto/uberweisen" class="btn btn-primary">Überweisung</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Profil</h5>
+                            <p class="card-text">Sehen Sie sich hier Ihr Profil und Ihre Konten an.</p>
+                            <a href="/profile" class="btn btn-primary">Profil</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Kontostand</h5>
+                            <p class="card-text">{{ kontostand }}</p>
+                        </div>
+                    </div>
+                </div>
             <a href="{% url 'logout' %}"><button class="btn btn-danger btn-block" id="sign_out"><i class="fa fa-user">Log Out</button></a>
         {% else %}
         <a href="/accounts/register"><button class="btn btn-primary btn-block" id="acc"><i class="fa fa-user"></i> Neuen Bankaccount erstellen</button></a>

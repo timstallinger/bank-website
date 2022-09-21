@@ -2,6 +2,7 @@ from django.contrib import admin
 from home.models import *
 
 admin.site.register(Bank)
+admin.site.register(Account)
 admin.site.register(Person)
 admin.site.register(Employee)
 admin.site.register(DebitCard)
