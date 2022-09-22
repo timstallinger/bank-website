@@ -182,11 +182,10 @@ class UberweisungForm(ModelForm):
         konto.usage = self.cleaned_data["verwendungszweck"]
         konto.sending_account_id =  request.POST.dict().get("senderkonto")
         konto.receiving_account = self.cleaned_data["zielkonto"]
-        konto.receiving_name = self.cleaned_data["Empfangername"]
+        konto.receiving_name = self.cleaned_data["empfangername"]
         konto.standing_order = self.cleaned_data["dauerauftrag"]
         if konto.standing_order:
-            standing_order_time = self.cleaned_data["zeit_input"]
-            konto.period_of_time = str(datetime.date(1, 1, 1) + datetime.timedelta(days=standing_order_time))
+            konto.standing_order_days = self.cleaned_data["zeit_input"]
 
 
 
