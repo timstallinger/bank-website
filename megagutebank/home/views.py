@@ -33,8 +33,12 @@ def konto_create(request):
 
 def profile_data(request):
     u = request.user
+    p = u
 
-    p = Person.objects.get(id=u.id)
+    if Person.objects.filter(id=u.id).exists():
+        p = Person.objects.get(id=u.id)
+        if not p.birthday:
+            p = u
 
     a = Account.objects.filter(owner=u.id)
 
