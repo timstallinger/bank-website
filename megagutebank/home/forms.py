@@ -77,12 +77,12 @@ class SignUpForm(UserCreationForm):
 konto_typen = [
     ('sparkonto', 'Sparkonto'),
     ('girokonto', 'Girokonto'),
-    ('kreditkartenkonto', 'Kreditkartenkonto'),
+    ('Tagesgeldkonto', 'Tagesgeldkonto'),
     ]
 typ_to_int = {
             'sparkonto': 0,
             'girokonto': 1,
-            'kreditkartenkonto': 2,
+            'Tagesgeldkonto': 2,
         }
 konto_cntry = [
     ('DE', 'Deutschland'),
@@ -177,10 +177,11 @@ class UberweisungForm(ModelForm):
         fields = ('betrag', 'zielkonto', 'verwendungszweck',)
 
     def save(self, request, commit=True):
+        sending_account = request.POST.dict().get("senderkonto")
         konto = super(UberweisungForm, self).save(commit=False)
         konto.amount = self.cleaned_data["betrag"]
         konto.usage = self.cleaned_data["verwendungszweck"]
-        konto.sending_account_id =  request.POST.dict().get("senderkonto")
+        konto.sending_account_id = sending_account
         konto.receiving_account = self.cleaned_data["zielkonto"]
         konto.receiving_name = self.cleaned_data["empfangername"]
         konto.standing_order = self.cleaned_data["dauerauftrag"]
