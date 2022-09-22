@@ -3,6 +3,7 @@ from django.contrib.auth import login, authenticate
 from .models import Account
 from .forms import SignUpForm, KontoForm, UberweisungForm
 from django.shortcuts import render, redirect
+from .models import *
 
 def signup(request):
     if request.method == 'POST':
@@ -29,6 +30,15 @@ def konto_create(request):
     else:
         form = KontoForm(request.user)
     return render(request, 'konto_create.html', {'form': form})
+
+def profile_data(request):
+    u = request.user
+
+    p = Person.objects.get(id=u.id)
+
+    a = Account.objects.filter(owner=u.id)
+
+    return render(request, 'profile.html', {'user': u, 'person': p, 'accounts': a})
 
 def konto_uberweisen(request):
     if request.method == 'POST':

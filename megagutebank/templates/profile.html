@@ -33,6 +33,7 @@
         #row_card{
             vertical-align: middle;
             margin-top: 10px;
+            background: white;
         }
         #col_card{
             line-height: 2px;
@@ -42,7 +43,7 @@
         }
         #button3{
             background: #ffffff;
-            width: 450px;
+            width: 100%;
             height: 100px;
             margin-right: 0;
             margin-top: 20px;
@@ -57,7 +58,6 @@
 {% endblock %}
 {% block bodycontent %}
 
-
     <div class="container text-center">
         <h1>Kundenprofil für MGB</h1>
         <h4><em>Uns können Sie vertrauen.</em></h4>
@@ -66,75 +66,68 @@
     <br>
 
     <form>
-            <div class="row text-center" style="margin-right: 0; justify-content: center; margin-top: 20px">
+            <div class="row text-center" style="margin-right: 0; justify-content: center; margin-top: 20px; width: auto">
               <div class="img">
-                  <img src="/static/images/avatar.png" id=avatar width="220px" style="border-radius: 50%">
+                  <img src={{person.profile_picture.url}} id=avatar width="220px" style="border-radius: 50%">
                 </div>
               <div class="infos">
                 <div class="name" id="NameInfo">
-                  <h1>Max Mustermann</h1>
-                  <h2>@mustermann</h2>
+                  <h1>{{person.first_name}} {{person.last_name}}</h1>
+                  <h2>@{{person.username}}</h2>
                 </div>
               </div>
               </div>
-      <div class="row text-center" style="margin-top: 30px">
-        <div class="col" style="margin-left: 0; margin-top: 20px">
+      <div class="row" style="margin-top: 30px; alignment: center">
+        <div class="col text-center" style="margin-top: 20px">
           <h3>Persönliche Daten</h3>
           <div class="card-body" style="margin-top: 20px;margin-left: 0">
-            <p>Max Mustermann</p>
-            <p>Geburtsdatum: 03.10.1989</p>
-            <p>Staudingerweg 9</p>
-            <p>55128 Mainz</p>
-            <p>Tel.: 06721 4825241</p>
-            <p>E-Mail: maxmustermann@gmail.com</p>
+            <p>{{person.first_name}} {{person.last_name}}</p>
+            <p>Geburtsdatum: {{person.birthday}}</p>
+            <p>{{person.address}}</p>
+              <!--<p>55128 Mainz</p>-->
+            <p>Tel.: {{person.phone_number}}</p>
+            <p>E-Mail: {{person.email}}</p>
           </div>
           </div>
 
-        <div class="col" style="margin-left: 0; margin-top: 20px">
-            <h3>Meine Konten</h3>
-            <div class="row justify-content-center">
-                <div class="square" id="sq">
-                    <div class="row justify-content-start" id="row_card" style="vertical-align: middle">
-                        <img src="/static/images/creditcard.png" id="card" style="width: 30%;height: fit-content">
-                        <div class="col text-start" id="col_card">
-                            <h4 style="margin-top: 15px">Giro Plus</h4>
-                            <p style="font-size: 0.8rem">IBAN: DE23 5805 2800 5630 6427</p>
-                        </div>
-                        <img src="/static/images/expand.png" id="expand" style="width: fit-content;height:25px;margin-bottom: 10px;margin-right: 5px">
+        <div class="col text-center" style="margin-left: 0; margin-top: 20px">
+            <h3 style="margin-bottom: 20px">Meine Konten</h3>
+            {% for account in accounts %}
+            <div class="col text-center d-flex justify-content-center" style="margin-top: 5px; alignment: center">
+                <div class="card" style="width: 450px;height: fit-content;margin-top: 0;background: white;border-radius: 10px;box-shadow: 0 4px 8px #c5c5c5;border: 0;margin-bottom: 20px">
+                    <div class="card-header" style="vertical-align: middle;width: 100%;height: 80px;border-radius: 10px;background: white">
+                        <button class="btn btn-link" data-toggle="collapse" data-target="#collapse{{ forloop.counter }}"  aria-expanded="true" aria-controls="collapse{{ forloop.counter }}" style="background: transparent; width: 100%;margin-left:-30px;margin-top: -17px;text-decoration: none">
+                            <div class="row justify-content-start" id="row_card" style="vertical-align: middle;background: transparent">
+                                <img src="/static/images/{{account.type}}.png" id="card" style="width: 15%;height: fit-content;margin-top: 0">
+                                    <div class="col text-start" id="col_card" style="margin-top: -5px">
+                                        <h4 id=AccountName style="margin-top: 10px; font-family: 'Product Sans',serif">
+                                            {{account.name}}</h4>
+                                        <p id="IBAN" style="font-size: 0.8rem">IBAN: {{account.iban}}</p>
+                                    </div>
+                                <img src="/static/images/expand.png" id="expand" style="width: fit-content;height:25px;margin-bottom: 10px;margin-right: -30px">
+                            </div>
+                        </button>
                     </div>
-                </div>
 
-                                <div class="square" id="sq">
-                    <div class="row justify-content-start" id="row_card" style="vertical-align: middle">
-                        <img src="/static/images/visa.png" id="card" style="width: 30%;height: fit-content;margin-top: 5px">
-                        <div class="col text-start" id="col_card">
-                            <h4 style="margin-top: 15px">Visa Card</h4>
-                            <p style="font-size: 0.8rem">IBAN: DE45 3902 7477 8392 9183</p>
-                        </div>
-                        <img src="/static/images/expand.png" id="expand" style="width: fit-content;height:25px;margin-bottom: 10px;margin-right: 5px">
+                <div id="collapse{{ forloop.counter }}" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                    <div class="card-body">
+                        <p>Betrag: {{account.amount}}</p>
+                        <p>Typ: {{account.type}}</p>
+                        <p>Zinsen: {{account.interest}}</p>
+                        <p>Negativzinsen: {{account.negative_interest}}</p>
+                        <p>Status: {{account.status}}</p>
                     </div>
-                </div>
-
-                <button type="button" class="collapsible" id="button3">
-                    <div class="row justify-content-start" id="row_card" style="vertical-align: middle">
-                        <img src="/static/images/visa.png" id="card" style="width: 30%;height: fit-content;margin-top: 0">
-                        <div class="col text-start" id="col_card">
-                            <h4 style="margin-top: 10px">Visa Debit</h4>
-                            <p style="font-size: 0.8rem">IBAN: DE45 3902 7477 8392 9183</p>
-                        </div>
-                        <img src="/static/images/expand.png" id="expand" style="width: fit-content;height:25px;margin-bottom: 10px;margin-right: 5px">
-                    </div>
-                </button>
-                <div class="content">
-                  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
                 </div>
                 </div>
 
-                </div>
+
             </div>
 
-      </form>
-    <br>
+            {% endfor %}
+
+        </div>
+      </div>
+    </form>
 
 <script>
 var coll = document.getElementsByClassName("collapsible");
