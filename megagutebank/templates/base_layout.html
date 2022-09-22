@@ -54,14 +54,14 @@
                 {% else %}
                     {% if request.path == '/' %}
                         <a class="nav-item nav-link active" href="/" id="nav-home">Home</a>
-                        <a class="nav-item nav-link" href="/profile" id="nav-profile">Profil</a>
+                        <a class="nav-item nav-link" href="/accounts/profile" id="nav-profile">Profil</a>
                         <a class="nav-item nav-link" href="/accounts/logout/" id="nav-logout">Ausloggen</a>
-                    {% elif request.path == '/profile/' %}
+                    {% elif request.path == '/accounts/profile/' %}
                         <a class="nav-item nav-link" href="/" id="nav-home">Home</a>
-                        <a class="nav-item nav-link active" href="/profile" id="nav-profile">Profil</a>
+                        <a class="nav-item nav-link active" href="/accounts/profile" id="nav-profile">Profil</a>
                         <a class="nav-item nav-link" href="/accounts/logout/" id="nav-logout">Ausloggen</a>
 
-                        <a class="nav-item nav-link" href="/profile" style="margin-left: 500px;">
+                        <a class="nav-item nav-link" href="/accounts/profile" style="margin-left: 500px;">
                             <img src="{% static 'images/adminlogo.png' %}" width="30px">
                             {{ user.username }}
                         </a>
