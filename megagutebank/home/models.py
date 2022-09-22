@@ -34,7 +34,7 @@ class Account(models.Model):
     interest = models.FloatField(default=0)
     negative_interest = models.FloatField(default=0.073)
     status = models.IntegerField(default=0)
-    employee = models.ForeignKey(Employee, default=None, on_delete=models.DO_NOTHING, blank=True)
+    employee = models.ForeignKey(Employee, default=None, on_delete=models.DO_NOTHING, blank=True, null=True)
 
 
 class DebitCard(models.Model):
@@ -62,14 +62,13 @@ class Tan(models.Model):
 class Transaction(models.Model):
     id = models.IntegerField(primary_key=True, auto_created=True)
     standing_order = models.BooleanField(default=0)
-    period_of_time = models.TimeField(null=True)
+    standing_order_days = models.IntegerField(null=True, default=None,blank=True)
     time_of_transaction = models.DateTimeField(default=timezone.now)
     amount = models.FloatField()
     sending_account = models.ForeignKey(Account, on_delete=models.DO_NOTHING, related_name='sending_account')
-    sender = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     receiving_account = models.CharField(max_length=34)
-    receiving_name = models.CharField(max_length=30)
-    usage = models.CharField(max_length=140, null=True)
+    receiving_name = models.CharField(max_length=30,null=True, default=None,blank=True)
+    usage = models.CharField(max_length=140, null=True, default=None,blank=True)
     approved = models.BooleanField(default=0)
     approved_by = models.ForeignKey(Employee, on_delete=models.DO_NOTHING, null=True)
 

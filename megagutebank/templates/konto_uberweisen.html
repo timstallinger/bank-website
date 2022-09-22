@@ -9,15 +9,40 @@
     <form method="POST">
       {% csrf_token %}
       {% for field in form %}
-          <label class="form-label mt-4 row" for="{{ field.id_for_label }}">{{ field.label }}</label>
-            {{ field }}
+      
+        {% if forloop.counter0|divisibleby:2 %}
+          <div class="form-group row">
+            <div class="col"  id = "div_{{field.id_for_label}}">
+            <label class="form-label mt-4" for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {{ field }}
+            </div>
+        {% else %}
+            <div class="col" id = "div_{{field.id_for_label}}">
+            <label class="form-label mt-4" for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {{ field }}
+            </div>
+          </div>
+        {% endif %}
       {% endfor %}
+      <script>
+        var checkbox = document.getElementById("id_dauerauftrag");
+        var zeitinput = document.getElementById("div_id_zeit_input");
+        zeitinput.style.display = "none";
+
+        checkbox.addEventListener( 'change', function() {
+          if(checkbox.checked == true) {
+            zeitinput.style.display = "block";
+          } else {
+            zeitinput.style.display = "none";
+          }
+        });
+      </script>
       <!-- drop down menu with all data in accounts list -->
       <div class="form-group row">
         <label for="account" class="form-label mt-4 row" for="senderkonto">Überweisungskonto</label>
         <select class="form-control" id="senderkonto" name="senderkonto">
           {% for account in accounts %}
-            <option value="{{ account.id }}" class="form-control">{{ account.iban }}</option>
+            <option value="{{ account.iban }}" class="form-control">{{ account.iban }}</option>
           {% endfor %}
         </select>
       <div class="row">

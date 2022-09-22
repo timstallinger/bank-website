@@ -43,4 +43,4 @@ def konto_uberweisen(request):
     # get all accounts of the user
     accounts = Account.objects.filter(owner=request.user)
 
-    return render(request, 'konto_uberweisen.html', {'form': form, 'accounts': accounts})
+    return render(request, 'konto_uberweisen.html', {'form': form, 'accounts': accounts, 'checked': False})

@@ -89,6 +89,11 @@ konto_cntry = [
     ('CH', 'Schweiz'),
     ('ES', 'Spanien'),
     ]
+dauerauftrag_options = [
+    ('days', 'Tage'),
+    ('months', 'Monate'),
+    ('years', 'Jahre'),
+    ]
 
 class KontoForm(ModelForm):
     def __init__(self, user, *args, **kwargs):
@@ -130,6 +135,7 @@ class UberweisungForm(ModelForm):
     def __init__(self, user, *args, **kwargs):
         self.user = user
         super(ModelForm, self).__init__(*args, **kwargs)
+
     # amount of money to transfer
     betrag = forms.DecimalField(max_digits=10, decimal_places=2, required=True,
         widget=forms.TextInput(
@@ -137,18 +143,34 @@ class UberweisungForm(ModelForm):
                 'class': 'form-control',
                 'placeholder': 'Betrag eingeben',
             }))
+    betrag.label = 'Betrag in Euro'
     zielkonto = forms.CharField(max_length=30, required=True,
         widget=forms.TextInput(
             attrs={
                 'class': 'form-control',
                 'placeholder': 'Zielkonto eingeben',
             }))
+    empfangername = forms.CharField(max_length=30, required=True,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Empfängername eingeben',
+            }))
+    empfangername.label="Empfängername"
     verwendungszweck = forms.CharField(max_length=30, required=True,
         widget=forms.TextInput(
             attrs={
                 'class': 'form-control',
                 'placeholder': 'Verwendungszweck eingeben',
             }))
+    dauerauftrag = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={
+        'class': 'form-check-input',
+        'style': 'margin-top: 30px;',
+    }))
+    zeit_input = forms.IntegerField(required=False, widget=forms.NumberInput(attrs={
+        'class':"form-control",
+    }))
+    zeit_input.label="Dauerauftrag Zeitabstand in Tagen"
     
     class Meta:
         model = Transaction
@@ -157,10 +179,16 @@ class UberweisungForm(ModelForm):
     def save(self, request, commit=True):
         konto = super(UberweisungForm, self).save(commit=False)
         konto.amount = self.cleaned_data["betrag"]
-        konto.verwendungszweck = self.cleaned_data["verwendungszweck"]
-        konto.sender = self.user
-        konto.senderkonto =  request.POST.dict().get("senderkonto")
-        konto.receiver = self.cleaned_data["zielkonto"]
+        konto.usage = self.cleaned_data["verwendungszweck"]
+        konto.sending_account_id =  request.POST.dict().get("senderkonto")
+        konto.receiving_account = self.cleaned_data["zielkonto"]
+        konto.receiving_name = self.cleaned_data["Empfangername"]
+        konto.standing_order = self.cleaned_data["dauerauftrag"]
+        if konto.standing_order:
+            standing_order_time = self.cleaned_data["zeit_input"]
+            konto.period_of_time = str(datetime.date(1, 1, 1) + datetime.timedelta(days=standing_order_time))
+
+
 
         if commit:
             konto.save()
