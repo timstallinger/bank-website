@@ -1,3 +1,4 @@
+from sqlite3 import IntegrityError
 from django import forms
 from django.forms import ModelForm
 from django.contrib.auth.forms import UserCreationForm
@@ -94,6 +95,11 @@ dauerauftrag_options = [
     ('months', 'Monate'),
     ('years', 'Jahre'),
     ]
+tagesgeld_options = [
+    ('1', '1 Jahr'),
+    ('3', '3 Jahre'),
+    ('5', '5 Jahre'),
+    ]
 
 class KontoForm(ModelForm):
     def __init__(self, user, *args, **kwargs):
@@ -112,6 +118,9 @@ class KontoForm(ModelForm):
     konto_standort = forms.CharField(max_length=30, required=True, widget=forms.Select(choices=konto_cntry, attrs={
         'class': 'btn btn-primary dropdown-toggle',
     }))
+    tagesgeld_dauer = forms.CharField(max_length=30, required=False, widget=forms.Select(choices=tagesgeld_options, attrs={
+        'class': 'btn btn-primary dropdown-toggle',
+    }))
 
     class Meta:
         model = Account
@@ -121,11 +130,17 @@ class KontoForm(ModelForm):
         konto.name = self.cleaned_data["konto_name"]
         konto.amount = 0
         konto.interestrate = 0
-        # generate a random IBAN
         konto.iban = self.cleaned_data["konto_standort"] + str(random.randint(1000000000, 9999999999))
         
         konto.type = typ_to_int[self.cleaned_data["konto_typ"]]
         konto.owner = self.user
+
+        if konto.type == 0:
+            konto.interest = 3.65
+        elif konto.type == 1:
+            konto.interest = 0.02
+        elif konto.type == 2:
+            konto.interest = 0
 
         if commit:
             konto.save()
@@ -178,18 +193,32 @@ class UberweisungForm(ModelForm):
 
     def save(self, request, commit=True):
         sending_account = request.POST.dict().get("senderkonto")
-        konto = super(UberweisungForm, self).save(commit=False)
-        konto.amount = self.cleaned_data["betrag"]
-        konto.usage = self.cleaned_data["verwendungszweck"]
-        konto.sending_account_id = sending_account
-        konto.receiving_account = self.cleaned_data["zielkonto"]
-        konto.receiving_name = self.cleaned_data["empfangername"]
-        konto.standing_order = self.cleaned_data["dauerauftrag"]
-        if konto.standing_order:
-            konto.standing_order_days = self.cleaned_data["zeit_input"]
+        sending_account = Account.objects.get(pk=sending_account)
 
+        transaction = super(UberweisungForm, self).save(commit=False)
+        transaction.amount = self.cleaned_data["betrag"]
+        transaction.usage = self.cleaned_data["verwendungszweck"]
+        transaction.sending_account = sending_account
+        transaction.receiving_account = self.cleaned_data["zielkonto"]
+        transaction.receiving_name = self.cleaned_data["empfangername"]
+        transaction.standing_order = self.cleaned_data["dauerauftrag"]
+        if transaction.standing_order:
+            transaction.standing_order_days = self.cleaned_data["zeit_input"]
+        
+        if sending_account.amount + sending_account.overdraft < transaction.amount:
+            # Falls Konto nicht ausreichend gedeckt ist, abbrechen
+            return None
+        sending_account.amount -= float(transaction.amount)
 
+        # Wenn das Zielkonto auf unserer Datenbank existiert, bekommt der Empfänger das Geld
+        # Ansonsten wird das Geld nicht überwiesen, aber die Transaktion wird erstellt
+        try:
+            receiver = Account.objects.get(iban=transaction.receiving_account)
+        except Account.DoesNotExist:
+            receiver = sending_account
+        receiver.amount += float(transaction.amount)
 
         if commit:
-            konto.save()
-        return konto
+            transaction.save()
+            sending_account.save()
+            receiver.save()
