@@ -1,6 +1,5 @@
 from django.contrib.auth import login, authenticate
 
-from .models import Account
 from .forms import SignUpForm, KontoForm, UberweisungForm
 from django.shortcuts import render, redirect
 from .models import *
@@ -58,3 +57,19 @@ def konto_uberweisen(request):
     accounts = Account.objects.filter(owner=request.user)
 
     return render(request, 'konto_uberweisen.html', {'form': form, 'accounts': accounts, 'checked': False})
+
+
+def transactions(request):
+    trans = []
+    # get all of users accounts
+    accounts = Account.objects.filter(owner=request.user)
+    # get all transactions of user
+    for account in accounts:
+        for t in Transaction.objects.filter(sending_account=account):
+            t.amount = -t.amount
+            trans.append(t)
+        for t in Transaction.objects.filter(receiving_account=account.iban):
+            trans.append(t)
+    trans.sort(key=lambda x: x.time_of_transaction, reverse=True)
+
+    return render(request, 'standing_transactions.html', {'gesendet': trans})
