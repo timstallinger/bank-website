@@ -138,7 +138,7 @@ class KontoForm(ModelForm):
         if konto.type == 0:
             konto.interest = 3.65
         elif konto.type == 1:
-            konto.interest = 0.02
+            konto.interest = 2
         elif konto.type == 2:
             konto.interest = 0
 
