@@ -9,12 +9,28 @@
     <form method="POST">
       {% csrf_token %}
       {% for field in form %}
+      <div id="div_{{ field.id_for_label }}">
           <label class="form-label mt-4 row" for="{{ field.id_for_label }}">{{ field.label }}</label>
             {{ field }}
+      </div>
       {% endfor %}
       <div class="row">
         <button type="submit" class="btn btn-primary" style="margin-top: 20px">Erstellen</button>
       </div>
+      <script>
+        var kontotyp = document.getElementById("id_konto_typ");
+        var dauer = document.getElementById("div_id_tagesgeld_dauer");
+        dauer.style.display = "none";
+
+        kontotyp.addEventListener( 'change', function() {
+          // if selection of kontotyp is "Tagesgeldkonto"
+          if (kontotyp.value == "Tagesgeldkonto") {
+            dauer.style.display = "block";
+          } else {
+            dauer.style.display = "none";
+          }
+        });
+      </script>
     </form>
   </div>
 

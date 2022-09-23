@@ -35,6 +35,20 @@ class Account(models.Model):
     negative_interest = models.FloatField(default=0.073)
     status = models.IntegerField(default=0)
     employee = models.ForeignKey(Employee, default=None, on_delete=models.DO_NOTHING, blank=True, null=True)
+    overdraft = models.FloatField(default=0)
+
+class Accountkopie(models.Model):
+    # aid = models.IntegerField(primary_key=True, auto_created=True)
+    iban = models.CharField(primary_key=True, max_length=34)
+    type = models.IntegerField()
+    name = models.CharField(max_length=30)
+    owner = models.ForeignKey(User, on_delete=models.RESTRICT, null=True)
+    amount = models.FloatField(default=0)
+    interest = models.FloatField(default=0)
+    negative_interest = models.FloatField(default=0.073)
+    status = models.IntegerField(default=0)
+    employee = models.ForeignKey(Employee, default=None, on_delete=models.DO_NOTHING, blank=True, null=True)
+    overdraft = models.FloatField(default=0)
 
 
 class DebitCard(models.Model):
@@ -70,7 +84,7 @@ class Transaction(models.Model):
     receiving_name = models.CharField(max_length=30,null=True, default=None,blank=True)
     usage = models.CharField(max_length=140, null=True, default=None,blank=True)
     approved = models.BooleanField(default=0)
-    approved_by = models.ForeignKey(Employee, on_delete=models.DO_NOTHING, null=True)
+    approved_by = models.ForeignKey(Employee, on_delete=models.DO_NOTHING, null=True, blank=True, default=None)
 
 class BankStatement(models.Model):
     id = models.IntegerField(primary_key=True)
