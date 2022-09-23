@@ -2,7 +2,7 @@ BEGIN;
 --
 -- Create model Account
 --
-CREATE TABLE "konto" (
+CREATE TABLE "account" (
 	"iban" varchar(34) NOT NULL PRIMARY KEY, 
 	"type" integer NOT NULL, 
 	"name" varchar(30) NOT NULL, 
@@ -14,7 +14,7 @@ CREATE TABLE "konto" (
 --
 -- Create model AccountKopie
 --
-CREATE TABLE "kontokopie" (
+CREATE TABLE "accountkopie" (
 	"iban" varchar(34) NOT NULL PRIMARY KEY, 
 	"type" integer NOT NULL, 
 	"name" varchar(30) NOT NULL, 
@@ -35,14 +35,14 @@ CREATE TABLE "bank" (
 --
 -- Create model BankStatement
 --
-CREATE TABLE "kontoauszug" (
+CREATE TABLE "bankstatement" (
 	"id" integer NOT NULL PRIMARY KEY, 
 	"time" datetime NOT NULL
 );
 --
 -- Create model Transaction
 --
-CREATE TABLE "transaktion" (
+CREATE TABLE "transaction" (
 	"id" integer NOT NULL PRIMARY KEY, 
 	"standing_order" bool NOT NULL, 
 	"standing_order_days" integer NULL, 
@@ -73,7 +73,7 @@ CREATE TABLE "person" (
 	"phone_number" varchar(20) NULL, 
 	"birthday" date NOT NULL
 );
-CREATE TABLE "person_kontakte" (
+CREATE TABLE "person_contacts" (
 	"id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, 
 	"from_person_id" integer NOT NULL REFERENCES "person" ("user_ptr_id") DEFERRABLE INITIALLY DEFERRED, 
 	"to_person_id" integer NOT NULL REFERENCES "person" ("user_ptr_id") DEFERRABLE INITIALLY DEFERRED
@@ -81,16 +81,27 @@ CREATE TABLE "person_kontakte" (
 --
 -- Add field person to employee
 --
-CREATE TABLE "angestellter" (
+CREATE TABLE "employee" (
 	"eid" integer NOT NULL PRIMARY KEY, 
 	"person_id" integer NOT NULL REFERENCES "person" ("user_ptr_id") DEFERRABLE INITIALLY DEFERRED
 );
 --
 -- Create model DebitCard
 --
-CREATE TABLE "physische_karte" (
+CREATE TABLE "debit_card" (
 	"id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, 
 	"pin" integer NOT NULL, "state" bool NOT NULL, 
 	"expiration_date" date NOT NULL, 
 	"account_id" varchar(34) NOT NULL REFERENCES "account" ("iban") DEFERRABLE INITIALLY DEFERRED
 );
+	
+CREATE TRIGGER kontokopieren
+   AFTER INSERT ON konto
+   REFERENCING NEW AS NEW
+   FOR EACH ROW
+   BEGIN
+     INSERT INTO kontokopie SELECT * FROM NEW;
+   END kontokopieren;
+
+
+ 
