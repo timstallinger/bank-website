@@ -30,14 +30,6 @@
             border-radius: 10px;
             box-shadow: 0 4px 8px #c5c5c5;
         }
-        #row_card{
-            vertical-align: middle;
-            margin-top: 10px;
-            background: white;
-        }
-        #col_card{
-            line-height: 2px;
-        }
         #expand_container{
             margin-bottom: 10px;
         }
@@ -53,6 +45,118 @@
             box-shadow: 0 4px 8px #c5c5c5;
             border: 0;
         }
+        #ButtonUeberweisung{
+             background: #ffffff;
+             width: 200px;
+             height: 40px;
+             border-radius: 10px;
+             box-shadow: 0 4px 8px #c5c5c5;
+             margin-left: 215px;
+             margin-top: 20px;
+             display: flex;
+             justify-content: center;
+             align-content: center;
+             flex-direction: column;
+             color: salmon;
+        }
+        #ButtonUeberweisung:hover{
+            background: salmon;
+            color: white;
+            box-shadow: 0 4px 8px salmon;
+        }
+        #ButtonErstellen{
+             background: #ffffff;
+             width: 200px;
+             height: 40px;
+             border-radius: 10px;
+             box-shadow: 0 4px 8px #c5c5c5;
+             margin-top: 20px;
+             display: flex;
+             justify-content: center;
+             align-content: center;
+             flex-direction: column;
+             color: #94fa72;
+            margin-left: 80px;
+        }
+        #ButtonErstellen:hover{
+            background: #94fa72;
+            color: white;
+            box-shadow: 0 4px 8px #94fa72;
+        }
+        #row1{
+             margin-right: 0;
+             justify-content: center;
+             margin-top: 20px;
+             width: auto;
+        }
+        #row2{
+             margin-top: 30px;
+             alignment: center
+        }
+        #col1{
+             margin-top: 20px
+        }
+        #col1-card-body{
+            margin-top: 20px;
+            margin-left: 0
+        }
+        #col2{
+            margin-left: 0;
+            margin-top: 20px
+        }
+        #KontoErstellen{
+             width: 400px;
+             height: 150px;
+             margin-top: 10px
+        }
+        #col-Konten{
+             margin-top: 5px;
+             alignment: center
+        }
+        #card-Konten{
+             width: 450px;
+             height: fit-content;
+             margin-top: 0;
+             background: white;
+             border-radius: 10px;
+             box-shadow: 0 4px 8px #c5c5c5;
+             border: 0;
+             margin-bottom: 20px
+        }
+        #card-header-Konten{
+             vertical-align: middle;
+             width: 100%;
+             height: 80px;
+             border-radius: 10px;
+             background: white
+        }
+        #btn-collapse-Konten{
+             background: transparent;
+             width: 100%;
+             margin-left:-30px;
+             margin-top: -17px;
+             text-decoration: none
+        }
+        #row-header-Konten{
+            vertical-align: middle;
+            margin-top: 10px;
+            background: transparent
+        }
+        #logo-Konten{
+            width: 15%;
+            height: fit-content;
+            margin-top: 0
+        }
+        #col-card-Konten{
+            line-height: 2px;
+            margin-top: -4px
+        }
+        #expand-logo-Konten{
+            width: fit-content;
+            height:25px;
+            margin-bottom: 10px;
+            margin-right: -30px
+        }
     </style>
 
 {% endblock %}
@@ -66,56 +170,91 @@
     <br>
 
     <form>
-            <div class="row text-center" style="margin-right: 0; justify-content: center; margin-top: 20px; width: auto">
-              <div class="img">
-                  <img src={{person.profile_picture.url}} id=avatar width="220px" style="border-radius: 50%">
-                </div>
-              <div class="infos">
-                <div class="name" id="NameInfo">
-                  <h1>{{person.first_name}} {{person.last_name}}</h1>
-                  <h2>@{{person.username}}</h2>
-                </div>
-              </div>
-              </div>
-      <div class="row" style="margin-top: 30px; alignment: center">
-        <div class="col text-center" style="margin-top: 20px">
+        <div class="row text-center" id="row1">
+          <div class="img">
+              {% if person.profile_picture %}
+              <img src={{person.profile_picture.url}} id=avatar width="220px" style="border-radius: 50%">
+              {% endif %}
+            </div>
+          <div class="infos">
+            <div class="name" id="NameInfo">
+              <h1 style="font-size: 1.8rem">{{person.first_name}} {{person.last_name}}</h1>
+              <h2 style="color: #727272; font-size: 1.2rem">@{{person.username}}</h2>
+            </div>
+          </div>
+      </div>
+      <div class="row" id="row2">
+        <div class="col text-center" id="col1">
           <h3>Persönliche Daten</h3>
-          <div class="card-body" style="margin-top: 20px;margin-left: 0">
+          <div class="card-body" id="col1-card-body">
+              {% if person.first_name %}
             <p>{{person.first_name}} {{person.last_name}}</p>
+              {% endif %}
+              {% if person.birthday %}
             <p>Geburtsdatum: {{person.birthday}}</p>
+              {% endif %}
+              {% if person.address %}
             <p>{{person.address}}</p>
+              {% endif %}
               <!--<p>55128 Mainz</p>-->
+              {% if person.phone_number %}
             <p>Tel.: {{person.phone_number}}</p>
+              {% endif %}
             <p>E-Mail: {{person.email}}</p>
           </div>
           </div>
 
-        <div class="col text-center" style="margin-left: 0; margin-top: 20px">
-            <h3 style="margin-bottom: 20px">Meine Konten</h3>
+        <div class="col text-center" id="col2">
+            <h3 style="margin-bottom: 20px">
+                Meine Konten
+            </h3>
+
+            {% if accounts.count == 0 %}
+                <div class="row d-flex justify-content-center">
+                    <div id="KontoErstellen">
+                        <p>Aktuell gibt es nichts zu sehen.</p>
+                        <p>Beantragen sie noch heute ein neues Konto.</p>
+                        <a class="btn btn-primary" id="ButtonErstellen" href="/accounts/konto/erstellen">
+                                <p style="margin-top: 16px">Konto erstellen</p>
+                            </a>
+                    </div>
+                    </div>
+            {% else %}
             {% for account in accounts %}
-            <div class="col text-center d-flex justify-content-center" style="margin-top: 5px; alignment: center">
-                <div class="card" style="width: 450px;height: fit-content;margin-top: 0;background: white;border-radius: 10px;box-shadow: 0 4px 8px #c5c5c5;border: 0;margin-bottom: 20px">
-                    <div class="card-header" style="vertical-align: middle;width: 100%;height: 80px;border-radius: 10px;background: white">
-                        <button class="btn btn-link" data-toggle="collapse" data-target="#collapse{{ forloop.counter }}"  aria-expanded="true" aria-controls="collapse{{ forloop.counter }}" style="background: transparent; width: 100%;margin-left:-30px;margin-top: -17px;text-decoration: none">
-                            <div class="row justify-content-start" id="row_card" style="vertical-align: middle;background: transparent">
-                                <img src="/static/images/{{account.type}}.png" id="card" style="width: 15%;height: fit-content;margin-top: 0">
-                                    <div class="col text-start" id="col_card" style="margin-top: -5px">
-                                        <h4 id=AccountName style="margin-top: 10px; font-family: 'Product Sans',serif">
+            <div class="col text-center d-flex justify-content-center" id="col-Konten">
+                <div class="card" id="card-Konten">
+                    <div class="card-header" id="card-header-Konten">
+                        <button class="btn btn-link" id="btn-collapse-Konten" data-toggle="collapse" data-target="#collapse{{ forloop.counter }}"  aria-expanded="true" aria-controls="collapse{{ forloop.counter }}">
+                            <div class="row justify-content-start" id="row-header-Konten">
+                                <img src="/static/images/{{account.type}}.png" id="logo-Konten">
+                                    <div class="col text-start" id="col-card-Konten">
+                                        <h4 id="Account-Name-Konten" style="margin-top: 10px; font-family: 'Product Sans',serif">
                                             {{account.name}}</h4>
-                                        <p id="IBAN" style="font-size: 0.8rem">IBAN: {{account.iban}}</p>
+                                        <p id="IBAN-Konten" style="font-size: 0.8rem">IBAN: {{account.iban}}</p>
                                     </div>
-                                <img src="/static/images/expand.png" id="expand" style="width: fit-content;height:25px;margin-bottom: 10px;margin-right: -30px">
+                                <img src="/static/images/expand.png" id="expand-logo-Konten">
                             </div>
                         </button>
                     </div>
 
-                <div id="collapse{{ forloop.counter }}" class="collapse" aria-labelledby="headingOne">
+                <div id="collapse{{ forloop.counter }}" class="collapse" aria-labelledby="card-header-Konten">
                     <div class="card-body">
-                        <p>Betrag: {{account.amount}}</p>
-                        <p>Typ: {{account.type}}</p>
-                        <p>Zinsen: {{account.interest}}</p>
-                        <p>Negativzinsen: {{account.negative_interest}}</p>
+                        <p>Betrag: {{account.amount}}€</p>
+                        {% if account.type == 0 %}
+                            <p>Typ: Tagesgeldkonto</p>
+                        {% elif account.type == 1 %}
+                            <p>Typ: Girokonto</p>
+                        {% elif account.type == 2 %}
+                            <p>Typ: Sparkonto</p>
+                        {% endif %}
+                        <p>Zinsen: {{account.interest}} % p.a.</p>
+                        <p>Negativzinsen: {{account.negative_interest}} % p.a.</p>
                         <p>Status: {{account.status}}</p>
+                        {% if account.type == 1 %}
+                            <a class="btn btn-primary" id="ButtonUeberweisung" href="/accounts/konto/uberweisen">
+                                <p style="margin-top: 16px">Überweisung</p>
+                            </a>
+                        {% endif %}
                     </div>
                 </div>
                 </div>
@@ -124,6 +263,7 @@
             </div>
 
             {% endfor %}
+            {% endif %}
 
         </div>
       </div>
