@@ -31,19 +31,39 @@
     <br>
     <div class="container">
         {% if user.is_authenticated %}
-            <h4>Ausstehende Transaktionen und Daueraufträge:</h4>
-            <div class="row">
-                <div class="col-sm-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Empfänger: Klaus</h5>
-                            <p class="card-text">Betrag: 50€</p>
-                            <a href="/accounts/konto/uberweisen" class="btn btn-primary">Details</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <a href="{% url 'logout' %}"><button class="btn btn-danger btn-block" id="sign_out"><i class="fa fa-user">Log Out</button></a>
+            <h4>Transaktionen und Daueraufträge:</h4>
+            <table class="table table-hover table-dark" id="transactions">
+            <thead>
+                <tr>
+                <th scope="col" onclick=sortTable(0)>Empfänger</th>
+                <th scope="col" onclick=sortTable(1)>Ausgeführt am</th>
+                <th scope="col" onclick=sortTable(2)>Zielkonto</th>
+                <th scope="col" onclick=sortTable(3)>Zweck</th>
+                <th scope="col" onclick=sortTable(4)>Betrag</th>
+                <th scope="col" onclick=sortTable(5)>Dauerauftrag</th>
+                <th scope="col" onclick=sortTable(6)>Bestätigt</th>
+                <th scope="col" onclick=sortTable(7)>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for trans in gesendet %}
+                <tr class="table-primary">
+                <th scope="row">{{trans.receiving_name}}</th>
+                <th scope="row">{{trans.time_of_transaction}}</th>
+                <th scope="row">{{trans.receiving_account}}</th>
+                <th scope="row">{{trans.usage}}</th>
+                {% if trans.amount < 0%}
+                    <th scope="row" class="text-danger">{{trans.amount}}</th>
+                {%else%}
+                    <th scope="row" class="text-success">{{trans.amount}}</th>
+                {%endif%}
+                <th scope="row">{{trans.standing_order}}</th>
+                <th scope="row">{{trans.approved}}</th>
+                <!--edit button--> 
+                <th scope="row"><a href="/accounts/transactions/{{trans.id}}"><button class="btn btn-danger btn-block" id="sign_in"><i class="fa fa-sign-in"></i> Details</button></a></th>
+                </tr>
+            {% endfor %}
+            </tbody>
         {% else %}
         <a href="/accounts/register"><button class="btn btn-primary btn-block" id="acc"><i class="fa fa-user"></i> Neuen Bankaccount erstellen</button></a>
         <br> 
@@ -51,6 +71,71 @@
         {% endif %}
     </div>
     </div>
-    
     <br>
+<script>
+function sortTable(n) {
+  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+  table = document.getElementById("transactions");
+  switching = true;
+  // Set the sorting direction to ascending:
+  dir = "asc";
+  /* Make a loop that will continue until
+  no switching has been done: */
+  while (switching) {
+    // Start by saying: no switching is done:
+    switching = false;
+    rows = table.rows;
+    /* Loop through all table rows (except the
+    first, which contains table headers): */
+    for (i = 1; i < (rows.length - 1); i++) {
+      // Start by saying there should be no switching:
+      shouldSwitch = false;
+      /* Get the two elements you want to compare,
+      one from current row and one from the next: */
+      x = rows[i].getElementsByTagName("th")[n];
+      y = rows[i + 1].getElementsByTagName("th")[n];
+      /* Check if the two rows should switch place,
+      based on the direction, asc or desc: */
+      if(n == 1){
+        // Sort by date
+        if (Date.parse(x.innerHTML.toLowerCase()) > Date.parse(y.innerHTML.toLowerCase())) {
+          // If so, mark as a switch and break the loop:
+          shouldSwitch = true;
+          break;
+        }
+      }
+      else{
+        if (dir == "asc") {
+            if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+            // If so, mark as a switch and break the loop:
+            shouldSwitch = true;
+            break;
+            }
+        } else if (dir == "desc") {
+            if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+            // If so, mark as a switch and break the loop:
+            shouldSwitch = true;
+            break;
+            }
+        }
+        }
+    }
+    if (shouldSwitch) {
+      /* If a switch has been marked, make the switch
+      and mark that a switch has been done: */
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+      // Each time a switch is done, increase this count by 1:
+      switchcount ++;
+    } else {
+      /* If no switching has been done AND the direction is "asc",
+      set the direction to "desc" and run the while loop again. */
+      if (switchcount == 0 && dir == "asc") {
+        dir = "desc";
+        switching = true;
+      }
+    }
+  }
+}
+</script>
 {% endblock %}
