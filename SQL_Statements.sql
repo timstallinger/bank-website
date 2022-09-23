@@ -2,7 +2,7 @@ BEGIN;
 --
 -- Create model Account
 --
-CREATE TABLE "account" (
+CREATE TABLE "konto" (
 	"iban" varchar(34) NOT NULL PRIMARY KEY, 
 	"type" integer NOT NULL, 
 	"name" varchar(30) NOT NULL, 
@@ -14,7 +14,7 @@ CREATE TABLE "account" (
 --
 -- Create model AccountKopie
 --
-CREATE TABLE "accountkopie" (
+CREATE TABLE "kontokopie" (
 	"iban" varchar(34) NOT NULL PRIMARY KEY, 
 	"type" integer NOT NULL, 
 	"name" varchar(30) NOT NULL, 
@@ -35,14 +35,14 @@ CREATE TABLE "bank" (
 --
 -- Create model BankStatement
 --
-CREATE TABLE "bankstatement" (
+CREATE TABLE "kontoauszug" (
 	"id" integer NOT NULL PRIMARY KEY, 
 	"time" datetime NOT NULL
 );
 --
 -- Create model Transaction
 --
-CREATE TABLE "transaction" (
+CREATE TABLE "transaktion" (
 	"id" integer NOT NULL PRIMARY KEY, 
 	"standing_order" bool NOT NULL, 
 	"standing_order_days" integer NULL, 
@@ -73,7 +73,7 @@ CREATE TABLE "person" (
 	"phone_number" varchar(20) NULL, 
 	"birthday" date NOT NULL
 );
-CREATE TABLE "person_contacts" (
+CREATE TABLE "person_kontakte" (
 	"id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, 
 	"from_person_id" integer NOT NULL REFERENCES "person" ("user_ptr_id") DEFERRABLE INITIALLY DEFERRED, 
 	"to_person_id" integer NOT NULL REFERENCES "person" ("user_ptr_id") DEFERRABLE INITIALLY DEFERRED
@@ -81,28 +81,16 @@ CREATE TABLE "person_contacts" (
 --
 -- Add field person to employee
 --
-CREATE TABLE "employee" (
+CREATE TABLE "angestellter" (
 	"eid" integer NOT NULL PRIMARY KEY, 
 	"person_id" integer NOT NULL REFERENCES "person" ("user_ptr_id") DEFERRABLE INITIALLY DEFERRED
 );
 --
 -- Create model DebitCard
 --
-CREATE TABLE "debitcard" (
+CREATE TABLE "physische_karte" (
 	"id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, 
 	"pin" integer NOT NULL, "state" bool NOT NULL, 
 	"expiration_date" date NOT NULL, 
 	"account_id" varchar(34) NOT NULL REFERENCES "account" ("iban") DEFERRABLE INITIALLY DEFERRED
 );
---
--- Create model Card
---
-CREATE TABLE "card" (
-	"id" varchar(30) NOT NULL PRIMARY KEY, 
-	"cvv" integer NOT NULL, 
-	"pin" integer NOT NULL, 
-	"state" bool NOT NULL, 
-	"expiration_date" date NOT NULL, 
-	"account_id" varchar(34) NOT NULL REFERENCES "account" ("iban") DEFERRABLE INITIALLY DEFERRED
-);
-COMMIT;
