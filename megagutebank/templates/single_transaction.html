@@ -1,0 +1,89 @@
+{% extends 'base_layout.html' %}
+{% load static %}
+{% block bodycontent %}
+
+    <div class="container text-center">
+        <h1>Transaktionsdetails Ihrer Überweisung {{trans.id}}</h1>
+        <h4><em>Uns können Sie vertrauen.</em></h4>
+    </div>
+    <br>
+    <div class="container">
+    <!-- List transaction details in cards -->
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">ID</h5>
+                    <p class="card-text">{{trans.id}}</p>
+                    {% if trans.standing_order %}
+                    <p class="card-text text-danger">Dauerauftrag
+                    {%endif%}
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Sender</h5>
+                    <p class="card-text">{{trans.sending_account}}
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Empfänger</h5>
+                    <p class="card-text">{{trans.receiving_account}}
+                </div>
+            </div>
+        </div>
+        </p>
+        <div class="col-sm-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Verwendungszweck</h5>
+                    <p class="card-text">{{trans.usage}}
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Zeitpunkt</h5>
+                    <p class="card-text">{{trans.time_of_transaction}}
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Betrag</h5>
+                    <p class="card-text">{{trans.amount}}
+                </div>
+            </div>
+        </div>
+        <p>
+        <div class="col-sm-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Bestätigt</h5>
+                    <p class="card-text">{{trans.approved}}
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Überweisung löschen</h5>
+                    <form action="deletetransaction" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="id" value="{{trans.id}}">
+                        <button type="submit" class="btn btn-danger" style="margin-top: 20px">Löschen</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    <div>
+</div>
+
+{% endblock %}

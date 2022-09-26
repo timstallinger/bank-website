@@ -100,6 +100,7 @@ class TransactionApiView(APIView):
         '''
         List all the todo items for given requested user
         '''
+        # TODO: What if only one of the dates is given?
         # get time range from request
         startDate = request.GET.get('startDate')
         endDate = request.GET.get('endDate')
@@ -135,6 +136,8 @@ class TransactionApiView(APIView):
 
 class TransactionDetailApiView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'single_transaction.html'
     def get(self, request, tid, *args, **kwargs):
         '''
         Get the details of the todo item with given id
@@ -143,7 +146,7 @@ class TransactionDetailApiView(APIView):
         if transaction is None:
             return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = TransactionSerializer(transaction)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({'trans': serializer.data})
     def get_object(self, tid):
         '''
         Helper method to get the object with given todo_id, and user_id

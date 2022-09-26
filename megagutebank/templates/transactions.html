@@ -1,3 +1,4 @@
+<!-- TODO -->
 {% extends 'base_layout.html' %}
 
 {% block stylecontent %}
@@ -83,7 +84,7 @@
                 <th scope="row">{{trans.standing_order}}</th>
                 <th scope="row">{{trans.approved}}</th>
                 <!--edit button--> 
-                <th scope="row"><a href="/accounts/transactions/{{trans.id}}"><button class="btn btn-danger btn-block" id="sign_in"><i class="fa fa-sign-in"></i> Details</button></a></th>
+                <th scope="row"><a href="/accounts/transactions/detail/{{trans.id}}"><button class="btn btn-danger btn-block" id="sign_in"><i class="fa fa-sign-in"></i> Details</button></a></th>
                 </tr>
             {% endfor %}
             </tbody>
