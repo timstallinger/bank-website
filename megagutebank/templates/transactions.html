@@ -61,7 +61,11 @@
     <br>
     <div class="container">
         <div class="card border-primary" style="border-radius: 25px;">
-            <h4 class="card-header">Transaktionen:</h4>
+            {% if startDate and endDate %}
+                <h4 class="card-header">Transaktionen von {{startDate}} bis {{endDate}}:</h4>
+            {% else %}
+                <h4 class="card-header">Transaktionen:</h4>
+            {% endif %}
             <div class="card-body">
             <table class="table table-hover table-dark" id="transactions">
             <thead>
@@ -109,7 +113,7 @@
 document.getElementById("filter").addEventListener("click", function(){
     var startdate = document.getElementById("startdate").value;
     var enddate = document.getElementById("enddate").value;
-    window.location.href = "/accounts/transactions/?startdate=" + startdate + "&endDate=" + enddate;
+    window.location.href = "/accounts/transactions/?startDate=" + startdate + "&endDate=" + enddate;
 });
 document.getElementById("deletefilter").addEventListener("click", function(){
     window.location.href = "/accounts/transactions/";

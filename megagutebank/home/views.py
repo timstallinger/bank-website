@@ -112,7 +112,7 @@ class TransactionApiView(APIView):
             t.time_of_transaction = t.time_of_transaction.strftime("%Y.%m.%d %H:%M")
 
         serializer = TransactionSerializer(transactions, many=True)
-        return Response({'trans': serializer.data})
+        return Response({'trans': serializer.data, 'startDate': startDate, 'endDate': endDate})
         # return Response(serializer.data, status=status.HTTP_200_OK)
     
     def get_queryset(self, request, startDate=None, endDate=None):
