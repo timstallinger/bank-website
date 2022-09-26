@@ -45,20 +45,23 @@
                     <a class="nav-link" href="/">Home</a>
                 {% endif %}
                 </li>
-                <li class="nav-item">
-                {% if request.path == '/accounts/profile/' %}
-                    <a class="nav-link active" href="/accounts/profile/">Profil</a>
-                {% else %}
-                    <a class="nav-link" href="/accounts/profile/">Profil</a>
-                {% endif %}
-                </li>
-                <li class="nav-item">
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                    {% if request.path == '/accounts/profile/' %}
+                        <a class="nav-link active" href="/accounts/profile/">Profil</a>
+                    {% else %}
+                        <a class="nav-link" href="/accounts/profile/">Profil</a>
+                    {% endif %}
+                    </li>
+                    <li class="nav-item">
+                {%endif%}
                 {% if request.path == '/about/' %}
                     <a class="nav-link active" href="/about">Über MGB</a>
                 {% else %}
                     <a class="nav-link" href="/about">Über MGB</a>
                 {% endif %}
                 </li>
+                {% if user.is_authenticated %}
                 <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Konto</a>
                 <div class="dropdown-menu">
@@ -69,15 +72,22 @@
                 </div>
                 </li>
                 <li class="nav-item">
-                <a class="nav-link" href="/accounts/profile/logout">Ausloggen</a>
+                <a class="nav-link" href="{% url 'logout' %}">Ausloggen</a>
                 </li>
+                {% endif    %}
             </ul>
+            {% if user.is_authenticated %}
             <form class="d-flex">
                 <a class="nav-link" href="/accounts/profile/">
-                    <img src="{% static 'images/adminlogo.png' %}" width="30px">
+                    <img src="{{user.profile_picture.url}}" width="30px">
                     <span style="margin-left: 10px;">{{ user.username }}</span>
                     </a>
             </form>
+            {%else%}
+            <form class="d-flex">
+                <a class="nav-link" href="{% url 'login' %}">Login</a>
+            </form>
+            {% endif %}
             </div>
         </div>
         </nav>
