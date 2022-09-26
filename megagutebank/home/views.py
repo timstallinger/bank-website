@@ -2,6 +2,7 @@ from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
 
 from rest_framework.views import APIView
+from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import permissions
@@ -84,6 +85,8 @@ def transactions(request):
 
 class TransactionApiView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'transactions.html'
     def get_object(self, tid):
         '''
         Helper method to get the object with given todo_id, and user_id
@@ -100,15 +103,16 @@ class TransactionApiView(APIView):
         # get time range from request
         startDate = request.GET.get('startDate')
         endDate = request.GET.get('endDate')
-        if startDate and endDate:
-            transactions = self.get_queryset(request, startDate, endDate)
-        else:
-            transactions = self.get_queryset(request)
+        transactions = self.get_queryset(request, startDate, endDate)
+
         # sort transactions by time
         transactions.sort(key=lambda x: x.time_of_transaction, reverse=True)
+        for t in transactions:
+            t.time_of_transaction = t.time_of_transaction.strftime("%Y.%m.%d %H:%M")
 
         serializer = TransactionSerializer(transactions, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({'trans': serializer.data})
+        # return Response(serializer.data, status=status.HTTP_200_OK)
     
     def get_queryset(self, request, startDate=None, endDate=None):
         transactions = []
@@ -127,7 +131,7 @@ class TransactionApiView(APIView):
             transactions += receiving
         return transactions
 
-        
+
 class TransactionDetailApiView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     def get(self, request, tid, *args, **kwargs):

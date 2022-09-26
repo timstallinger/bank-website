@@ -60,7 +60,7 @@
                 </tr>
             </thead>
             <tbody>
-            {% for trans in gesendet %}
+            {% for trans in trans %}
                 <tr class="table-primary">
                 <th scope="row">{{trans.receiving_name}}</th>
                 <th scope="row">{{trans.time_of_transaction}}</th>
@@ -110,15 +110,6 @@ function sortTable(n) {
       y = rows[i + 1].getElementsByTagName("th")[n];
       /* Check if the two rows should switch place,
       based on the direction, asc or desc: */
-      if(n == 1){
-        // Sort by date
-        if (Date.parse(x.innerHTML.toLowerCase()) > Date.parse(y.innerHTML.toLowerCase())) {
-          // If so, mark as a switch and break the loop:
-          shouldSwitch = true;
-          break;
-        }
-      }
-      else{
         if (dir == "asc") {
             if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
             // If so, mark as a switch and break the loop:
@@ -131,7 +122,6 @@ function sortTable(n) {
             shouldSwitch = true;
             break;
             }
-        }
         }
     }
     if (shouldSwitch) {
