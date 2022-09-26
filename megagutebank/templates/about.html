@@ -1,0 +1,55 @@
+{% extends 'base_layout.html' %}
+
+{% block stylecontent %}
+    <style>
+        a:hover {
+            text-decoration: none;
+        }
+        
+        .foot {
+            position: absolute;
+            bottom: 0px;
+            left: 0px;
+            right: 0px;
+        }
+    </style>
+    <link rel="stylesheet" href="/static/common-styles.css">
+
+{% endblock %}
+        
+
+{% block bodycontent %}    
+    <div class="container text-center">
+        {% if user.is_authenticated %}
+            <h1>Willkommen {{ user.username }}!</h1>
+            <h4><em>Uns können Sie vertrauen.</em></h4>
+        {% else %}
+            <h1>Willkommen bei Mega Gute Bank</h1>
+            <h4><em>Uns können Sie vertrauen.</em></h4>
+        {% endif %}
+    </div>
+    
+    <br>
+    
+    <div class="container">
+    <p>Willkommen bei der Mega guten Bank MGB.</p>
+    <p>Wir sind eine Bank, die sich auf die Bedürfnisse von Privatkunden spezialisiert hat. Wir bieten Ihnen ein breites Spektrum an Finanzdienstleistungen an. </p>
+    <p>MGB wurde in einem Datenbankenpraktikum 2022 von der Gruppe A06 gegründet und hat den Zweck, Artur und Co glücklich zu machen, sodass wir so bald wie möglich nach Hause gehen können.</p>
+    <p>Sollte dies der Fall sein, bitten wir lediglich um eine kleine Spende in Form von Creditpoints.</p>
+    <p>Vielen Dank für Ihr Verständnis.</p>
+    <p>Zu unseren Diestleistungen gehören:</p>
+    <ul>
+        <li>Sparkonten</li>
+        <li>Girokonten</li>
+        <li>Kreditkarten</li>
+        <li>Finanzierungen</li>
+        <li>Depots</li>
+        <li>und vieles mehr</li>
+    </ul>
+    <p>Wir freuen uns auf Ihre Kontaktaufnahme.</p>
+    <p>Legen Sie direkt los und <a href="/login">loggen Sie sich ein</a> oder <a href="/register">registrieren Sie sich</a>!</p>
+    </div>
+    </div>
+    
+    <br>
+{% endblock %}

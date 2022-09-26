@@ -26,6 +26,7 @@ context = {"Name": 'Tim'}
 urlpatterns = [
     path('', views.index, name='home'),
     path("accounts/", include("home.urls")),
+    path("about/", TemplateView.as_view(template_name="about.html"), name="about"),
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
 ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
