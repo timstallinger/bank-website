@@ -32,6 +32,20 @@
     <div class="container">
         {% if user.is_authenticated %}
             <h4>Transaktionen und Daueraufträge:</h4>
+            <!-- Filter -->
+            <p>
+                <a href="/transactions" class="btn btn-primary">Alle</a>
+                <a href="/transactions?filter=1" class="btn btn-primary">Eingehend</a>
+                <a href="/transactions?filter=2" class="btn btn-primary">Ausgehend</a>
+                <a href="/transactions?filter=3" class="btn btn-primary">Daueraufträge</a>
+            </p>
+            <!-- Filter by date -->
+            <p>
+                <a href="/transactions?filter=1&date=1" class="btn btn-primary">Heute</a>
+                <a href="/transactions?filter=1&date=2" class="btn btn-primary">Diese Woche</a>
+                <a href="/transactions?filter=1&date=3" class="btn btn-primary">Diesen Monat</a>
+                <a href="/transactions?filter=1&date=4" class="btn btn-primary">Dieses Jahr</a>
+            </p>
             <table class="table table-hover table-dark" id="transactions">
             <thead>
                 <tr>

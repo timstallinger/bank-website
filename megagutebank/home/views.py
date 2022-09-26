@@ -1,8 +1,15 @@
 from django.contrib.auth import login, authenticate
-
-from .forms import SignUpForm, KontoForm, UberweisungForm
 from django.shortcuts import render, redirect
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework import permissions
+
 from .models import *
+from .serializers import TransactionSerializer
+from .forms import SignUpForm, KontoForm, UberweisungForm
+
 
 def signup(request):
     if request.method == 'POST':
@@ -73,3 +80,70 @@ def transactions(request):
     trans.sort(key=lambda x: x.time_of_transaction, reverse=True)
 
     return render(request, 'standing_transactions.html', {'gesendet': trans})
+
+
+class TransactionApiView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    def get_object(self, tid):
+        '''
+        Helper method to get the object with given todo_id, and user_id
+        '''
+        try:
+            return Transaction.objects.get(id=tid)
+        except Transaction.DoesNotExist:
+            return None
+
+    def get(self, request, *args, **kwargs):
+        '''
+        List all the todo items for given requested user
+        '''
+        # get time range from request
+        startDate = request.GET.get('startDate')
+        endDate = request.GET.get('endDate')
+        if startDate and endDate:
+            transactions = self.get_queryset(request, startDate, endDate)
+        else:
+            transactions = self.get_queryset(request)
+        # sort transactions by time
+        transactions.sort(key=lambda x: x.time_of_transaction, reverse=True)
+
+        serializer = TransactionSerializer(transactions, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def get_queryset(self, request, startDate=None, endDate=None):
+        transactions = []
+        accounts = Account.objects.filter(owner=request.user)
+        for account in accounts:
+            if startDate and endDate:
+                sending = Transaction.objects.filter(sending_account=account, time_of_transaction__range=[startDate, endDate])
+                receiving = Transaction.objects.filter(receiving_account=account.iban, time_of_transaction__range=[startDate, endDate])
+            else:
+                sending = Transaction.objects.filter(sending_account=account)
+                receiving = Transaction.objects.filter(receiving_account=account.iban)
+            # set sending amount negative
+            for t in sending:
+                t.amount = -t.amount
+            transactions += sending
+            transactions += receiving
+        return transactions
+
+        
+class TransactionDetailApiView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    def get(self, request, tid, *args, **kwargs):
+        '''
+        Get the details of the todo item with given id
+        '''
+        transaction = self.get_object(tid)
+        if transaction is None:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = TransactionSerializer(transaction)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    def get_object(self, tid):
+        '''
+        Helper method to get the object with given todo_id, and user_id
+        '''
+        try:
+            return Transaction.objects.get(id=tid)
+        except Transaction.DoesNotExist:
+            return None
