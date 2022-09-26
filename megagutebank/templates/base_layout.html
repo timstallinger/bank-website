@@ -80,27 +80,39 @@
             <div class="collapse navbar-collapse" id="navbarColor01">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                <a class="nav-link active" href="/">Home
-                    <span class="visually-hidden">(current)</span>
-                </a>
+                {% if request.path == '/' %}
+                    <a class="nav-link active" href="/">Home
+                        <span class="visually-hidden">(current)</span>
+                    </a>
+                {% else %}
+                    <a class="nav-link" href="/">Home</a>
+                {% endif %}
                 </li>
                 <li class="nav-item">
-                <a class="nav-link" href="/accounts/profile/">Profil</a>
+                {% if request.path == '/accounts/profile/' %}
+                    <a class="nav-link active" href="/accounts/profile/">Profil</a>
+                {% else %}
+                    <a class="nav-link" href="/accounts/profile/">Profil</a>
+                {% endif %}
                 </li>
                 <li class="nav-item">
-                <a class="nav-link" href="/accounts/profile/logout">Ausloggen</a>
-                </li>
-                <li class="nav-item">
-                <a class="nav-link" href="#">About</a>
+                {% if request.path == '/about/' %}
+                    <a class="nav-link active" href="/about">Über MGB</a>
+                {% else %}
+                    <a class="nav-link" href="/about">Über MGB</a>
+                {% endif %}
                 </li>
                 <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Konto</a>
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Konto</a>
                 <div class="dropdown-menu">
                     <a class="dropdown-item" href="/accounts/konto/uberweisen">Überweisen</a>
                     <a class="dropdown-item" href="/accounts/transactions/">Transaktionen</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="/accounts/konto/erstellen">Konto anlegen</a>
                 </div>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link" href="/accounts/profile/logout">Ausloggen</a>
                 </li>
             </ul>
             <form class="d-flex">
