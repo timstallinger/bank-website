@@ -127,6 +127,7 @@ class TransactionApiView(APIView):
             # set sending amount negative
             for t in sending:
                 t.amount = -t.amount
+            
             transactions += sending
             transactions += receiving
         return transactions

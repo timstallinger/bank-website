@@ -32,20 +32,29 @@
     <div class="container">
         {% if user.is_authenticated %}
             <h4>Transaktionen und Daueraufträge:</h4>
-            <!-- Filter -->
+            <!-- Datepicker for startdate and enddate filter-->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="startdate">Startdatum:</label>
+                        <input type="date" class="form-control" id="startdate" name="startdate">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="enddate">Enddatum:</label>
+                        <input type="date" class="form-control" id="enddate" name="enddate">
+                    </div>
+                </div>
+            </div>
             <p>
-                <a href="/transactions" class="btn btn-primary">Alle</a>
-                <a href="/transactions?filter=1" class="btn btn-primary">Eingehend</a>
-                <a href="/transactions?filter=2" class="btn btn-primary">Ausgehend</a>
-                <a href="/transactions?filter=3" class="btn btn-primary">Daueraufträge</a>
-            </p>
-            <!-- Filter by date -->
-            <p>
-                <a href="/transactions?filter=1&date=1" class="btn btn-primary">Heute</a>
-                <a href="/transactions?filter=1&date=2" class="btn btn-primary">Diese Woche</a>
-                <a href="/transactions?filter=1&date=3" class="btn btn-primary">Diesen Monat</a>
-                <a href="/transactions?filter=1&date=4" class="btn btn-primary">Dieses Jahr</a>
-            </p>
+                <div class="form-group">
+                    <button type="button" class="btn btn-primary" id="filter" name="filter">Filter anwenden</button>
+                </div>
+                <p>
+                <div class="form-group">
+                    <button type="button" class="btn btn-danger" id="deletefilter" name="deletefilter">Alle Filter löschen</button>
+                </div>
             <table class="table table-hover table-dark" id="transactions">
             <thead>
                 <tr>
@@ -87,6 +96,15 @@
     </div>
     <br>
 <script>
+// when user presses on filter button, the user will be redirected to the filtered transactions page
+document.getElementById("filter").addEventListener("click", function(){
+    var startdate = document.getElementById("startdate").value;
+    var enddate = document.getElementById("enddate").value;
+    window.location.href = "/accounts/transactions/?startdate=" + startdate + "&endDate=" + enddate;
+});
+document.getElementById("deletefilter").addEventListener("click", function(){
+    window.location.href = "/accounts/transactions/";
+});
 function sortTable(n) {
   var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
   table = document.getElementById("transactions");
