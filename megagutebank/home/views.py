@@ -11,7 +11,7 @@ from rest_framework.views import APIView
 
 from .models import *
 from .serializers import TransactionSerializer
-from .forms import SignUpForm, KontoForm, UberweisungForm
+from .forms import SignUpForm, KontoForm, UberweisungForm, TagesgeldForm
 
 from datetime import date
 
@@ -32,7 +32,11 @@ def signup(request):
 
 def konto_create(request):
     if request.method == 'POST':
-        form = KontoForm(request.user, request.POST)
+        tagesgeld = request.POST.get("tagesgeld")
+        if tagesgeld == 0 or tagesgeld == 1:
+            form = KontoForm(request.user, request.POST)
+        else:
+            form = TagesgeldForm(request.user, request.POST)
         if form.is_valid():
             form.save()
             return redirect('user_profile')

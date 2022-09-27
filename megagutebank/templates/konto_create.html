@@ -8,6 +8,7 @@
     <div class="container">
     <form method="POST">
       {% csrf_token %}
+      <input id="id_tagesgeld" type="hidden" name="tagesgeld" value="0">
       {% for field in form %}
       <div id="div_{{ field.id_for_label }}">
           <label class="form-label mt-4 row" for="{{ field.id_for_label }}">{{ field.label }}</label>
@@ -19,19 +20,23 @@
       </div>
       <script>
         var kontotyp = document.getElementById("id_konto_typ");
+        var tagesgeld = document.getElementById("id_tagesgeld");
         var dauer = document.getElementById("div_id_tagesgeld_dauer");
         dauer.style.display = "none";
 
         kontotyp.addEventListener( 'change', function() {
           // if selection of kontotyp is "Tagesgeldkonto"
           if (kontotyp.value == "Tagesgeldkonto") {
+            tagesgeld.value="1";
             dauer.style.display = "block";
           } else {
+            tagesgeld.value="0";
             dauer.style.display = "none";
           }
         });
       </script>
     </form>
   </div>
+  <p>
 
 {% endblock %}
