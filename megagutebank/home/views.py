@@ -1,11 +1,13 @@
 from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
-from rest_framework.views import APIView
-from rest_framework.renderers import TemplateHTMLRenderer
-from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import permissions
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.renderers import TemplateHTMLRenderer
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from .models import *
 from .serializers import TransactionSerializer
@@ -87,6 +89,7 @@ class TransactionApiView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     renderer_classes = [TemplateHTMLRenderer]
     template_name = 'transactions.html'
+    page_size = 10
     def get_object(self, tid):
         '''
         Helper method to get the object with given todo_id, and user_id
@@ -104,6 +107,7 @@ class TransactionApiView(APIView):
         # get time range from request
         startDate = request.GET.get('startDate')
         endDate = request.GET.get('endDate')
+        page = request.GET.get('page',1)
         transactions = self.get_queryset(request, startDate, endDate)
 
         # sort transactions by time
@@ -112,13 +116,24 @@ class TransactionApiView(APIView):
             t.time_of_transaction = t.time_of_transaction.strftime("%Y.%m.%d %H:%M")
 
         serializer = TransactionSerializer(transactions, many=True)
-        startDate=startDate.split('-')
-        startDate.reverse()
-        startDate = '.'.join(startDate)
-        endDate=endDate.split('-')
-        endDate.reverse()
-        endDate = '.'.join(endDate)
-        return Response({'trans': serializer.data, 'startDate': startDate, 'endDate': endDate})
+        if startDate and endDate:
+            startDate=startDate.split('-')
+            startDate.reverse()
+            startDate = '.'.join(startDate)
+            endDate=endDate.split('-')
+            endDate.reverse()
+            endDate = '.'.join(endDate)
+
+        paginator = Paginator(transactions, 10)
+        try:
+            transactions = paginator.page(page)
+        except PageNotAnInteger:
+            transactions = paginator.page(1)
+        except EmptyPage:
+            transactions = paginator.page(paginator.num_pages)
+
+
+        return Response({'trans': transactions, 'startDate': startDate, 'endDate': endDate})
         # return Response(serializer.data, status=status.HTTP_200_OK)
     
     def get_queryset(self, request, startDate=None, endDate=None):
