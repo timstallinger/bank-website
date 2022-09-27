@@ -194,10 +194,13 @@ class TransactionDetailApiView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = TransactionSerializer(transaction)
         # get sender from transaction
-        sender_account = Account.objects.get(iban=transaction.sending_account.iban)
-        receiver_account = Account.objects.get(iban=transaction.receiving_account)
+        sender_account = Account.objects.get(iban=transaction.sending_account.iban).owner
+        try:
+            receiver_account = Account.objects.get(iban=transaction.receiving_account).owner
+        except Account.DoesNotExist:
+            receiver_account = None
         time = transaction.time_of_transaction.strftime("%Y.%m.%d, %H:%M")
-        return Response({'trans': serializer.data, 'sender': sender_account.owner, 'receiver': receiver_account.owner, 'time':time})
+        return Response({'trans': serializer.data, 'sender': sender_account, 'receiver': receiver_account, 'time':time})
     def get_object(self, tid):
         '''
         Helper method to get the object with given todo_id, and user_id
