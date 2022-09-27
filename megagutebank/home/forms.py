@@ -131,6 +131,7 @@ class KontoForm(ModelForm):
         konto.name = self.cleaned_data["konto_name"]
         konto.amount = 0
         konto.interestrate = 0
+        # generate valid iban
         konto.iban = self.cleaned_data["konto_standort"] + str(10010005) + str(random.randint(1000000000, 9999999999))
 
         if self.cleaned_data["konto_standort"] == "DE":

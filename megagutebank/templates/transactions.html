@@ -80,6 +80,7 @@
     <h4 class="card-header">Transaktionen:</h4>
     {% endif %}
     <div class="card-body">
+    <h4 style="text-align:right">Guthaben nach Zeitraum: {{ endBalance }}</h4>
       <table class="table table-hover table-dark" id="transactions">
         <thead>
           <tr>
@@ -119,6 +120,7 @@
           {% endfor %}
         </tbody>
       </table>
+      <h4 style="text-align:right">Guthaben vor Zeitraum: {{ startBalance }}</h4>
     </div>
     {% else %}
     <a href="/accounts/register"

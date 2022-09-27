@@ -13,6 +13,8 @@ from .models import *
 from .serializers import TransactionSerializer
 from .forms import SignUpForm, KontoForm, UberweisungForm
 
+from datetime import date
+
 
 def signup(request):
     if request.method == 'POST':
@@ -104,6 +106,7 @@ class TransactionApiView(APIView):
         List all the todo items for given requested user
         '''
         # TODO: What if only one of the dates is given?
+        # TODO: filter by account
         # get time range from request
         startDate = request.GET.get('startDate')
         endDate = request.GET.get('endDate')
@@ -122,14 +125,9 @@ class TransactionApiView(APIView):
             argstr+="&startDate="+startDate
         if endDate:
             argstr+="&endDate="+endDate
-        
-        if startDate and endDate:
-            startDate=startDate.split('-')
-            startDate.reverse()
-            startDate = '.'.join(startDate)
-            endDate=endDate.split('-')
-            endDate.reverse()
-            endDate = '.'.join(endDate)
+
+        # calculate bank start balance and endbalance
+        (start_balance, end_balance)=self.get_balance(request, startDate,endDate, transactions)
 
         paginator = Paginator(transactions, 10)
         try:
@@ -138,7 +136,7 @@ class TransactionApiView(APIView):
             transactions = paginator.page(1)
         except EmptyPage:
             transactions = paginator.page(paginator.num_pages)
-        return Response({'trans': transactions, 'startDate': startDate, 'endDate': endDate,'argstr':argstr})
+        return Response({'trans': transactions, 'startDate': startDate, 'endDate': endDate,'argstr':argstr, 'startBalance':start_balance, 'endBalance':end_balance})
         # return Response(serializer.data, status=status.HTTP_200_OK)
     
     def get_queryset(self, request, startDate=None, endDate=None):
@@ -153,11 +151,34 @@ class TransactionApiView(APIView):
                 receiving = Transaction.objects.filter(receiving_account=account.iban)
             # set sending amount negative
             for t in sending:
-                t.amount = -t.amount
+                t.amount = int(-t.amount)
             
             transactions += sending
             transactions += receiving
         return transactions
+
+    def get_balance(self,request, startDate,endDate, trans_in_range):
+        '''
+        Calculate the start and end balance of the bank account in given time range
+        '''
+        if endDate == None:
+            endDate = date.today()
+        accountbalance = 0
+        for account in Account.objects.filter(owner=request.user):
+            accountbalance += account.amount
+        # get all transactions since endDate
+        transactions = self.get_queryset(request, endDate, date.today())
+        end_balance = accountbalance
+        for t in transactions:
+            end_balance += t.amount
+        # get all transactions since startDate
+        transactions = trans_in_range
+        start_balance = end_balance
+        for t in transactions:
+            start_balance -= t.amount
+        print(start_balance, "E:",end_balance)
+        return (start_balance,end_balance)
+
 
 
 class TransactionDetailApiView(APIView):
@@ -172,7 +193,11 @@ class TransactionDetailApiView(APIView):
         if transaction is None:
             return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = TransactionSerializer(transaction)
-        return Response({'trans': serializer.data})
+        # get sender from transaction
+        sender_account = Account.objects.get(iban=transaction.sending_account.iban)
+        receiver_account = Account.objects.get(iban=transaction.receiving_account)
+        time = transaction.time_of_transaction.strftime("%Y.%m.%d, %H:%M")
+        return Response({'trans': serializer.data, 'sender': sender_account.owner, 'receiver': receiver_account.owner, 'time':time})
     def get_object(self, tid):
         '''
         Helper method to get the object with given todo_id, and user_id
