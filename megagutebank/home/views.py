@@ -206,3 +206,12 @@ class TransactionDetailApiView(APIView):
             return Transaction.objects.get(id=tid)
         except Transaction.DoesNotExist:
             return None
+
+    def post(self, request,tid):
+        snippet = self.get_object(tid)
+        print(snippet.sending_account)
+        if snippet.sending_account.owner == request.user and (not snippet.approved or snippet.standing_order):
+            snippet.delete()
+        else:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        return redirect('/accounts/transactions/')
