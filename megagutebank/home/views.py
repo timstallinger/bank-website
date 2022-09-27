@@ -116,6 +116,13 @@ class TransactionApiView(APIView):
             t.time_of_transaction = t.time_of_transaction.strftime("%Y.%m.%d %H:%M")
 
         serializer = TransactionSerializer(transactions, many=True)
+        
+        argstr=""
+        if startDate:
+            argstr+="&startDate="+startDate
+        if endDate:
+            argstr+="&endDate="+endDate
+        
         if startDate and endDate:
             startDate=startDate.split('-')
             startDate.reverse()
@@ -131,9 +138,7 @@ class TransactionApiView(APIView):
             transactions = paginator.page(1)
         except EmptyPage:
             transactions = paginator.page(paginator.num_pages)
-
-
-        return Response({'trans': transactions, 'startDate': startDate, 'endDate': endDate})
+        return Response({'trans': transactions, 'startDate': startDate, 'endDate': endDate,'argstr':argstr})
         # return Response(serializer.data, status=status.HTTP_200_OK)
     
     def get_queryset(self, request, startDate=None, endDate=None):
