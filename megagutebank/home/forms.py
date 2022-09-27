@@ -125,13 +125,47 @@ class KontoForm(ModelForm):
     class Meta:
         model = Account
         fields = ('konto_name', 'konto_standort')
+
     def save(self, commit=True):
         konto = super(KontoForm, self).save(commit=False)
         konto.name = self.cleaned_data["konto_name"]
         konto.amount = 0
         konto.interestrate = 0
-        konto.iban = self.cleaned_data["konto_standort"] + str(random.randint(1000000000, 9999999999))
-        
+        konto.iban = self.cleaned_data["konto_standort"] + str(10010005) + str(random.randint(1000000000, 9999999999))
+
+        if self.cleaned_data["konto_standort"] == "DE":
+            blz_fill = 100100500000000000
+            account_nr = random.randint(1, 9999999999)
+            temp_iban = blz_fill + account_nr
+            checksum = 98 - (int(str(temp_iban) + str(131400)) % 97)
+
+            if checksum < 10:
+                konto.iban = f"DE0{checksum}{temp_iban}"
+            else:
+                konto.iban = f"DE{checksum}{temp_iban}"
+
+        elif self.cleaned_data["konto_standort"] == "CH":
+            blz_fill = 10050000000000000
+            account_nr = random.randint(1, 999999999999)
+            temp_iban = blz_fill + account_nr
+            checksum = 98 - (int(str(temp_iban) + str(121700)) % 97)
+
+            if checksum < 10:
+                konto.iban = f"CH0{checksum}{temp_iban}"
+            else:
+                konto.iban = f"CH{checksum}{temp_iban}"
+
+        elif self.cleaned_data["konto_standort"] == "ES":
+            blz_fill = 10505010170000000000
+            account_nr = random.randint(1, 9999999999)
+            temp_iban = blz_fill + account_nr
+            checksum = 98 - (int(str(temp_iban) + str(142800)) % 97)
+
+            if checksum < 10:
+                konto.iban = f"ES0{checksum}{temp_iban}"
+            else:
+                konto.iban = f"ES{checksum}{temp_iban}"
+
         konto.type = typ_to_int[self.cleaned_data["konto_typ"]]
         konto.owner = self.user
 
