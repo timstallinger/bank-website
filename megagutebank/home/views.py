@@ -74,10 +74,10 @@ def konto_create(request):
         else:
             form = TagesgeldForm(request.user, request.POST)
         if form.is_valid():
-            form.save()
+            res = form.save()
+            if res == 0:
+                return render(request, 'konto_create.html', {'form': form, 'error': "Ihr Girokonto ist nicht ausreichend gedeckt!"})
             return redirect('/accounts/profile/')
-        else:
-            form = KontoForm(request.user)
     else:
         form = KontoForm(request.user)
     return render(request, 'konto_create.html', {'form': form})

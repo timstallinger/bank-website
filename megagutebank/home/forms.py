@@ -75,7 +75,6 @@ class SignUpForm(UserCreationForm):
         check_user = self.cleaned_data["username"]
         check_user = Person.objects.filter(username=check_user)
         if check_user.exists():
-            print("Username already exists")
             raise forms.ValidationError("Dieser Username ist bereits vergeben.")
         if commit:
             user.save()
@@ -180,7 +179,6 @@ class TagesgeldForm(KontoForm):
         model = TagesgeldAccount
         fields = ('konto_name', 'konto_standort', 'tagesgeld_dauer')
     def save(self, commit=True):
-        print("Test")
         konto = super(TagesgeldForm, self).save(commit=False)
         konto.name = self.cleaned_data["konto_name"]
         amount = self.cleaned_data["tagesgeld_amount"]
@@ -206,7 +204,7 @@ class TagesgeldForm(KontoForm):
             # Tagesgeldkonto
             giro = Account.objects.get(owner=self.user, type=1)
             if giro.amount < konto.amount:
-                raise forms.ValidationError("Sie haben nicht genügend Geld auf Ihrem Girokonto.")
+                return 0
             giro.amount -= float(konto.amount)
             konto.interest = 0
         
@@ -323,9 +321,7 @@ class KuendigungForm(ModelForm):
 
     def save(self, request, commit=True):
         sending_account = request.POST.dict().get("senderkonto")
-        print("before")
         sending_account = Account.objects.get(pk=sending_account)
-        print("after")
 
         transaction = super(KuendigungForm, self).save(commit=False)
         transaction.amount = sending_account.amount
