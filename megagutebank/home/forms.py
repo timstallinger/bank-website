@@ -232,7 +232,7 @@ class UberweisungForm(ModelForm):
         'class':"form-control",
     }))
     zeit_input.label="Dauerauftrag Zeitabstand in Tagen"
-    
+
     class Meta:
         model = Transaction
         fields = ('betrag', 'zielkonto', 'verwendungszweck',)
@@ -250,7 +250,7 @@ class UberweisungForm(ModelForm):
         transaction.standing_order = self.cleaned_data["dauerauftrag"]
         if transaction.standing_order:
             transaction.standing_order_days = self.cleaned_data["zeit_input"]
-        
+
         if sending_account.amount + sending_account.overdraft < transaction.amount:
             # Falls Konto nicht ausreichend gedeckt ist, abbrechen
             return None
@@ -263,6 +263,71 @@ class UberweisungForm(ModelForm):
         except Account.DoesNotExist:
             receiver = sending_account
         receiver.amount += float(transaction.amount)
+
+        # check transfer from savings account
+        if sending_account.type == 0:
+            possible_accounts = Account.objects.filter(owner=sending_account.owner, type=1)
+            if receiver not in possible_accounts:
+                commit = False
+
+        if commit:
+            transaction.save()
+            sending_account.save()
+            receiver.save()
+
+
+class KuendigungForm(ModelForm):
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super(ModelForm, self).__init__(*args, **kwargs)
+
+    # amount of money to transfer
+
+    zielkonto = forms.CharField(max_length=30, required=True,
+                                widget=forms.TextInput(
+                                    attrs={
+                                        'class': 'form-control',
+                                        'placeholder': 'Zielkonto eingeben',
+                                    }))
+
+    class Meta:
+        model = Transaction
+        fields = ()
+
+    def save(self, request, commit=True):
+        sending_account = request.POST.dict().get("senderkonto")
+        print("before")
+        sending_account = Account.objects.get(pk=sending_account)
+        print("after")
+
+        transaction = super(KuendigungForm, self).save(commit=False)
+        transaction.amount = sending_account.amount
+        transaction.usage = f"Auflösung von Konto {sending_account.iban}"
+        transaction.sending_account = sending_account
+        transaction.receiving_account = self.cleaned_data["zielkonto"]
+        transaction.receiving_name = ""
+        transaction.standing_order = 0
+
+        sending_account.amount -= float(transaction.amount)
+        sending_account.status = 0
+
+        # Wenn das Zielkonto auf unserer Datenbank existiert, bekommt der Empfänger das Geld
+        # Ansonsten wird das Geld nicht überwiesen, aber die Transaktion wird erstellt
+        try:
+            receiver = Account.objects.get(iban=transaction.receiving_account)
+        except Account.DoesNotExist:
+            receiver = sending_account
+        receiver.amount += float(transaction.amount)
+
+        # check if cancelation of cd_account
+        if sending_account.type == 2:
+
+            # cancelation only possible if transaction account exists to send money to
+            possible_accounts = Account.objects.filter(owner=sending_account.owner, type=1)
+            if receiver not in possible_accounts:
+                commit = False
+        else:
+            commit = False
 
         if commit:
             transaction.save()

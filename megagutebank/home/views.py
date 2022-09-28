@@ -11,7 +11,7 @@ from rest_framework.views import APIView
 
 from .models import *
 from .serializers import TransactionSerializer
-from .forms import SignUpForm, KontoForm, UberweisungForm, TagesgeldForm
+from .forms import SignUpForm, KontoForm, UberweisungForm, TagesgeldForm, KuendigungForm
 
 from datetime import date
 
@@ -125,6 +125,21 @@ def konto_uberweisen(request):
 
     return render(request, 'konto_uberweisen.html', {'form': form, 'accounts': accounts, 'checked': False})
 
+
+def konto_kuendigen(request):
+    if request.method == 'POST':
+        form = KuendigungForm(request.user, request.POST)
+        if form.is_valid():
+            form.save(request)
+            return redirect('user_profile')
+        else:
+            form = KuendigungForm(request.user)
+    else:
+        form = KuendigungForm(request.user)
+    # get all accounts of the user
+    accounts = Account.objects.filter(owner=request.user)
+
+    return render(request, 'konto_kuendigen.html', {'form': form, 'accounts': accounts, 'checked': False})
 
 def transactions(request):
     trans = []

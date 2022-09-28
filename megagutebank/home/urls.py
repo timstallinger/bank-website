@@ -11,4 +11,5 @@ urlpatterns = [
     path('konto/uberweisen', views.konto_uberweisen, name='konto_uberweisen'),
     path('employee/', views.employee, name='employee'),
     path('verwalten/', views.manage, name='verwalten'),
+    path('konto/kuendigen', views.konto_kuendigen, name="konto_kuendigen")
 ]
