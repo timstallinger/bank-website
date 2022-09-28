@@ -11,7 +11,7 @@ from rest_framework.views import APIView
 
 from .models import *
 from .serializers import TransactionSerializer
-from .forms import SignUpForm, KontoForm, UberweisungForm
+from .forms import SignUpForm, KontoForm, UberweisungForm, TagesgeldForm
 
 from datetime import date
 
@@ -32,7 +32,11 @@ def signup(request):
 
 def konto_create(request):
     if request.method == 'POST':
-        form = KontoForm(request.user, request.POST)
+        tagesgeld = request.POST.get("tagesgeld")
+        if tagesgeld == 0 or tagesgeld == 1:
+            form = KontoForm(request.user, request.POST)
+        else:
+            form = TagesgeldForm(request.user, request.POST)
         if form.is_valid():
             form.save()
             return redirect('user_profile')
@@ -194,10 +198,13 @@ class TransactionDetailApiView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = TransactionSerializer(transaction)
         # get sender from transaction
-        sender_account = Account.objects.get(iban=transaction.sending_account.iban)
-        receiver_account = Account.objects.get(iban=transaction.receiving_account)
+        sender_account = Account.objects.get(iban=transaction.sending_account.iban).owner
+        try:
+            receiver_account = Account.objects.get(iban=transaction.receiving_account).owner
+        except Account.DoesNotExist:
+            receiver_account = None
         time = transaction.time_of_transaction.strftime("%Y.%m.%d, %H:%M")
-        return Response({'trans': serializer.data, 'sender': sender_account.owner, 'receiver': receiver_account.owner, 'time':time})
+        return Response({'trans': serializer.data, 'sender': sender_account, 'receiver': receiver_account, 'time':time})
     def get_object(self, tid):
         '''
         Helper method to get the object with given todo_id, and user_id
@@ -206,3 +213,12 @@ class TransactionDetailApiView(APIView):
             return Transaction.objects.get(id=tid)
         except Transaction.DoesNotExist:
             return None
+
+    def post(self, request,tid):
+        snippet = self.get_object(tid)
+        print(snippet.sending_account)
+        if snippet.sending_account.owner == request.user and (not snippet.approved or snippet.standing_order):
+            snippet.delete()
+        else:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        return redirect('/accounts/transactions/')

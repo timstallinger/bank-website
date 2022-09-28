@@ -5,7 +5,7 @@ from django.contrib.auth.forms import UserCreationForm
 import random
 import datetime
 
-from .models import Person, Account, Transaction
+from .models import Person, Account, TagesgeldAccount, Transaction
 
 class SignUpForm(UserCreationForm):
     vorname = forms.CharField(max_length=30, required=True,
@@ -121,10 +121,22 @@ class KontoForm(ModelForm):
     tagesgeld_dauer = forms.CharField(max_length=30, required=False, widget=forms.Select(choices=tagesgeld_options, attrs={
         'class': 'btn btn-primary dropdown-toggle',
     }))
-
+    
     class Meta:
         model = Account
         fields = ('konto_name', 'konto_standort')
+
+    def gen_iban(self, cntry):
+        blz_fill = 100100500000000000
+        account_nr = random.randint(1, 9999999999)
+        temp_iban = blz_fill + account_nr
+        checksum = 98 - (int(str(temp_iban) + str(131400)) % 97)
+
+        if checksum < 10:
+            iban = f"{cntry}0{checksum}{temp_iban}"
+        else:
+            iban = f"{cntry}{checksum}{temp_iban}"
+        return iban
 
     def save(self, commit=True):
         konto = super(KontoForm, self).save(commit=False)
@@ -134,38 +146,37 @@ class KontoForm(ModelForm):
         # generate valid iban
         konto.iban = self.cleaned_data["konto_standort"] + str(10010005) + str(random.randint(1000000000, 9999999999))
 
-        if self.cleaned_data["konto_standort"] == "DE":
-            blz_fill = 100100500000000000
-            account_nr = random.randint(1, 9999999999)
-            temp_iban = blz_fill + account_nr
-            checksum = 98 - (int(str(temp_iban) + str(131400)) % 97)
+        self.gen_iban(self.cleaned_data["konto_standort"])
 
-            if checksum < 10:
-                konto.iban = f"DE0{checksum}{temp_iban}"
-            else:
-                konto.iban = f"DE{checksum}{temp_iban}"
+        konto.type = typ_to_int[self.cleaned_data["konto_typ"]]
+        konto.owner = self.user
 
-        elif self.cleaned_data["konto_standort"] == "CH":
-            blz_fill = 10050000000000000
-            account_nr = random.randint(1, 999999999999)
-            temp_iban = blz_fill + account_nr
-            checksum = 98 - (int(str(temp_iban) + str(121700)) % 97)
+        if konto.type == 0:
+            konto.interest = 3.65
+        elif konto.type == 1:
+            konto.interest = 2
+        elif konto.type == 2:
+            konto.interest = 0
 
-            if checksum < 10:
-                konto.iban = f"CH0{checksum}{temp_iban}"
-            else:
-                konto.iban = f"CH{checksum}{temp_iban}"
+        if commit:
+            konto.save()
+        return konto
 
-        elif self.cleaned_data["konto_standort"] == "ES":
-            blz_fill = 10505010170000000000
-            account_nr = random.randint(1, 9999999999)
-            temp_iban = blz_fill + account_nr
-            checksum = 98 - (int(str(temp_iban) + str(142800)) % 97)
+class TagesgeldForm(KontoForm):
+    class Meta:
+        model = TagesgeldAccount
+        fields = ('konto_name', 'konto_standort', 'tagesgeld_dauer')
+    def save(self, commit=True):
+        print("Test")
+        konto = super(TagesgeldForm, self).save(commit=False)
+        konto.name = self.cleaned_data["konto_name"]
+        konto.amount = 0
+        konto.interestrate = 0
+        konto.time_period = self.cleaned_data["tagesgeld_dauer"]
+        # generate valid iban
+        konto.iban = self.cleaned_data["konto_standort"] + str(10010005) + str(random.randint(1000000000, 9999999999))
 
-            if checksum < 10:
-                konto.iban = f"ES0{checksum}{temp_iban}"
-            else:
-                konto.iban = f"ES{checksum}{temp_iban}"
+        self.gen_iban(self.cleaned_data["konto_standort"])
 
         konto.type = typ_to_int[self.cleaned_data["konto_typ"]]
         konto.owner = self.user

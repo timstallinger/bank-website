@@ -50,15 +50,31 @@
                 </div>
             </div>
         </div>
-        {% if not trans.approved or trans.standing_order %}
+        {% if not trans.approved%}
         <p>
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Überweisung löschen</h5>
-                    <form action="deletetransaction" method="POST">
+                    <h5 class="card-title">Überweisung abbrechen</h5>
+                    <form action="/accounts/transactions/detail/{{trans.id}}/" method="POST">
                         {% csrf_token %}
-                        <input type="hidden" name="id" value="{{trans.id}}">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <input type="hidden" name="tid" value="{{trans.id}}">
+                        <button type="submit" class="btn btn-danger" style="margin-top: 20px">Abbrechen</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% elif trans.standing_order %}
+        <p>
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Dauerauftrag löschen</h5>
+                    <form action="/accounts/transactions/detail/{{trans.id}}/" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="_method" value="DELETE">
+                        <input type="hidden" name="tid" value="{{trans.id}}">
                         <button type="submit" class="btn btn-danger" style="margin-top: 20px">Löschen</button>
                     </form>
                 </div>
