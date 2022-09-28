@@ -76,6 +76,7 @@ class SignUpForm(UserCreationForm):
         check_user = Person.objects.filter(username=check_user)
         if check_user.exists():
             raise forms.ValidationError("Dieser Username ist bereits vergeben.")
+        user.confirmed = False
         if commit:
             user.save()
         return user

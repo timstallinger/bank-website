@@ -29,8 +29,12 @@
         {% endif %}
     </div> 
     <div class="container">
-    <h2>Da hat was nicht geklappt.</p>
-    <h2>Lassen Sie ihr Konto bestätigen.</p>
+    <h2>Ups, da hat was nicht geklappt.</p>
+    {% if error %}
+      <div class="alert alert-danger" role="alert">
+            {{ error }}
+      </div>
+    {% endif %}
     </div>
     </div>
     

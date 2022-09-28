@@ -67,6 +67,8 @@ def signup(request):
     return render(request, 'register.html', {'form': form})
 
 def konto_create(request):
+    if not (request.user.is_authenticated and request.user.confirmed):
+        return redirect('/error/', {'error': 'Sie sind nicht angemeldet oder Ihre Konto wurde noch nicht bestätigt.'})
     if request.method == 'POST':
         tagesgeld = request.POST.get("tagesgeld")
         if tagesgeld == 0 or tagesgeld == 1:
@@ -83,13 +85,14 @@ def konto_create(request):
     return render(request, 'konto_create.html', {'form': form})
 
 def profile_data(request):
+    if not (request.user.is_authenticated):
+        return redirect('/error/', {'error': 'Sie sind nicht angemeldet.'})
     if request.GET.get('create_card'):
         i = request.GET.get('create_card')
         Acc = Account.objects.get(iban=i)
         Card.objects.create(id=1, cvv=284, pin=7528, state=0, expiration_date="2022-09-26", account=Acc)
 
     c = Card.objects.all()
-
     u = request.user
     p = u
 
@@ -108,6 +111,8 @@ def profile_data(request):
 
 
 def konto_uberweisen(request):
+    if not (request.user.is_authenticated and request.user.confirmed):
+        return redirect('/error/', {'error': 'Sie sind nicht angemeldet oder Ihre Konto wurde noch nicht bestätigt.'})
     if request.method == 'POST':
         form = UberweisungForm(request.user, request.POST)
         if form.is_valid():
@@ -128,6 +133,8 @@ def konto_uberweisen(request):
 
 
 def konto_kuendigen(request):
+    if not (request.user.is_authenticated and request.user.confirmed):
+        return redirect('/error/', {'error': 'Sie sind nicht angemeldet oder Ihre Konto wurde noch nicht bestätigt.'})
     if request.method == 'POST':
         form = KuendigungForm(request.user, request.POST)
         if form.is_valid():
@@ -143,6 +150,8 @@ def konto_kuendigen(request):
     return render(request, 'konto_kuendigen.html', {'form': form, 'accounts': accounts, 'checked': False})
 
 def transactions(request):
+    if not (request.user.is_authenticated):
+        return redirect('/error/', {'error': 'Sie sind nicht angemeldet.'})
     trans = []
     # get all of users accounts
     accounts = Account.objects.filter(owner=request.user)
