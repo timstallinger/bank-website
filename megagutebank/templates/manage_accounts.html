@@ -29,7 +29,7 @@
         {% endif %}
     </div>
     <br>
-    <div class="container" style="margin-left: 0; width: 100%; overflow: auto">
+    <div class="container" style="overflow: auto">
         {% if user.is_authenticated %}
             <h4>Bankkonten:</h4>
             <table class="table table-hover table-dark" id="accounts" style="table-layout: fixed; width: auto">
@@ -101,7 +101,7 @@
     </div>
 
 
-    <div class="container" style="margin-left: 5px; width: 100%; margin-top: 30px">
+    <div class="container" style="margin-top: 30px; overflow: auto">
         {% if user.is_authenticated %}
             <h4>Bankkarten:</h4>
             <table class="table table-hover table-dark" id="cards" style="table-layout: fixed; width: auto">

@@ -134,7 +134,7 @@ def konto_uberweisen(request):
 
 def konto_kuendigen(request):
     if not (request.user.is_authenticated and request.user.person.confirmed):
-        return redirect('/error/', {'error': 'Sie sind nicht angemeldet oder Ihre Konto wurde noch nicht bestätigt.'})
+        return render(request, 'error.html', {'error': 'Sie sind nicht angemeldet oder Ihre Konto wurde noch nicht bestätigt.'})
     if request.method == 'POST':
         form = KuendigungForm(request.user, request.POST)
         if form.is_valid():
@@ -151,7 +151,7 @@ def konto_kuendigen(request):
 
 def transactions(request):
     if not (request.user.is_authenticated):
-        return redirect('/error/', {'error': 'Sie sind nicht angemeldet.'})
+        return render(request, 'error.html', {'error': 'Sie sind nicht angemeldet oder Ihre Konto wurde noch nicht bestätigt.'})
     trans = []
     # get all of users accounts
     accounts = Account.objects.filter(owner=request.user)
