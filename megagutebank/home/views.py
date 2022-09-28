@@ -1,3 +1,6 @@
+import datetime
+import random
+
 from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
@@ -14,6 +17,8 @@ from .serializers import TransactionSerializer
 from .forms import SignUpForm, KontoForm, UberweisungForm, TagesgeldForm, KuendigungForm
 
 from datetime import date
+
+#TODO: Profil -> Karte -> autoincrement
 
 def manage(request):
     if request.user.is_authenticated and request.user.is_staff:
@@ -90,7 +95,13 @@ def profile_data(request):
     if request.GET.get('create_card'):
         i = request.GET.get('create_card')
         Acc = Account.objects.get(iban=i)
-        Card.objects.create(id=1, cvv=284, pin=7528, state=0, expiration_date="2022-09-26", account=Acc)
+        Card.objects.create(
+            cvv = random.randint(100, 999),
+            pin=random.randint(1000, 9999),
+            state=0,
+            expiration_date=date.today() + datetime.timedelta(days=1826.2125), # 5 years
+            account=Acc
+        )
 
     c = Card.objects.all()
     u = request.user
@@ -107,7 +118,13 @@ def profile_data(request):
 
     a = Account.objects.filter(owner=u.id)
 
-    return render(request, 'profile.html', {'user': u, 'person': p, 'accounts': a, 'cards': c, 'list': L})
+    for acc in a:
+        acc.interest *= 100
+        acc.negative_interest *= 100
+
+    T = TagesgeldAccount.objects.filter(type=2)
+
+    return render(request, 'profile.html', {'user': u, 'person': p, 'accounts': a, 'cards': c, 'list': L, 'tagesgeld': T})
 
 
 def konto_uberweisen(request):
