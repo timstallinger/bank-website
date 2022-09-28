@@ -8,4 +8,4 @@ def index(request):
     if request.user.is_authenticated:
         for account in request.user.account_set.all():
             kontostand += account.amount
-    return render(request, 'index.html', {'user': request.user, 'kontostand': kontostand})
+        return render(request, 'index.html', {'user': request.user, 'kontostand': kontostand})

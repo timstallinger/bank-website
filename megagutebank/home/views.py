@@ -15,6 +15,45 @@ from .forms import SignUpForm, KontoForm, UberweisungForm, TagesgeldForm
 
 from datetime import date
 
+def employee(request):
+    if request.user.is_authenticated and request.user.is_staff:
+        bankdaten = Bank.objects.get(bic="MALADE51KRE")
+        return render(request, 'employee.html', {'user': request.user, 'bankdaten': bankdaten})
+
+def manage(request):
+    if request.user.is_authenticated and request.user.is_staff:
+        if request.POST.get("button_declined"):
+            D = request.POST.get("button_declined")
+            a = Account.objects.get(iban=D)
+            a.status = -1
+            a.employee = Employee.objects.get(eid=request.user.id)
+            a.save()
+        elif request.POST.get("button_approved"):
+            D = request.POST.get("button_approved")
+            a = Account.objects.get(iban=D)
+            a.status = 1
+            a.employee = Employee.objects.get(eid=request.user.id)
+            a.save()
+        if request.POST.get("button_active"):
+            cid = request.POST.get("button_active")
+            c = Card.objects.get(id=cid)
+            c.state = 1
+            c.save()
+        if request.POST.get("button_inactive"):
+            cid = request.POST.get("button_inactive")
+            c = Card.objects.get(id=cid)
+            c.state = 0
+            c.save()
+        if request.POST.get("ov_iban"):
+            iban = request.POST.get("ov_iban")
+            ov = request.POST.get("ov_field")
+            a = Account.objects.get(iban=iban)
+            a.overdraft = ov
+            a.save()
+        Accounts = Account.objects.all()
+        Cards = Card.objects.all()
+
+        return render(request, 'manage_accounts.html', {'user': request.user, 'accounts': Accounts, 'cards': Cards})
 
 def signup(request):
     if request.method == 'POST':
@@ -47,6 +86,13 @@ def konto_create(request):
     return render(request, 'konto_create.html', {'form': form})
 
 def profile_data(request):
+    if request.GET.get('create_card'):
+        i = request.GET.get('create_card')
+        Acc = Account.objects.get(iban=i)
+        Card.objects.create(id=1, cvv=284, pin=7528, state=0, expiration_date="2022-09-26", account=Acc)
+
+    c = Card.objects.all()
+
     u = request.user
     p = u
 
@@ -55,9 +101,14 @@ def profile_data(request):
         if not p.birthday:
             p = u
 
+    L = []
+    for card in c:
+        L.append(card.account_id)
+
     a = Account.objects.filter(owner=u.id)
 
-    return render(request, 'profile.html', {'user': u, 'person': p, 'accounts': a})
+    return render(request, 'profile.html', {'user': u, 'person': p, 'accounts': a, 'cards': c, 'list': L})
+
 
 def konto_uberweisen(request):
     if request.method == 'POST':

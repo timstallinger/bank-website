@@ -90,6 +90,7 @@
              width: auto;
         }
         #row2{
+             width: 100%;
              margin-top: 30px;
              alignment: center
         }
@@ -199,7 +200,7 @@
               {% if person.phone_number %}
             <p>Tel.: {{person.phone_number}}</p>
               {% endif %}
-            <p>E-Mail: {{person.email}}</p>
+            <p style="margin-bottom: 50px">E-Mail: {{person.email}}</p>
           </div>
           </div>
 
@@ -216,6 +217,7 @@
                         <a class="btn btn-primary" id="ButtonErstellen" href="/accounts/konto/erstellen">
                                 <p style="margin-top: 16px">Konto erstellen</p>
                             </a>
+
                     </div>
                     </div>
             {% else %}
@@ -250,9 +252,72 @@
                         <p>Negativzinsen: {{account.negative_interest}} % p.a.</p>
                         <p>Status: {{account.status}}</p>
                         {% if account.type == 1 %}
+                        {% if account.iban in list %}
+                        <div style="width: 100%;height:200px;background: #efe3d1;display: flex; justify-content: left; border-radius: 10px">
+                            <img src="{% static 'images/gold-karte.png' %}" style="width: 200px;height: max-content;margin-left: -22px">
+                            <h4 style="margin-top: 15px">Ihre Girocard.</h4>
+                            {% for card in cards %}
+                            {% if card.account_id == account.iban %}
+                            <div class="col" style="width: 300px; height: 200px; margin-top: 50px; margin-left: -205px">
+                                <div style="display: flex; justify-content: left; margin-bottom: -10px">
+                                    <img src="{% static 'images/credit_card.png' %}" style="width: 25px;height: max-content">
+                                    <p style="margin-left: 5px; margin-top: 2px; font-size: 0.9rem">{{ card.account_id }}</p>
+                                </div>
+                                <!--<div class="row" style="margin-top: 5px; height: 20px; display: flex; vertical-align: middle">-->
+                                <div style="display: flex; justify-content: left; margin-bottom: -10px">
+                                    <img src="{% static 'images/pin.svg' %}" style="width: 25px;height: max-content">
+                                    <p style="margin-left: 5px; margin-top: 2px; font-size: 0.9rem">{{ card.pin }}</p>
+                                </div>
+                                <div style="display: flex; justify-content: left; margin-bottom: -10px">
+                                    <img src="{% static 'images/check.svg' %}" style="width: 25px;height: max-content">
+                                    {% if card.state == 0 %}
+                                    <p style="margin-left: 5px; margin-top: 2px; font-size: 0.9rem; color: crimson">
+                                        inaktiv
+                                        </p>
+                                        {% elif card.state == 1 %}
+                                    <p style="margin-left: 5px; margin-top: 2px; font-size: 0.9rem; color: limegreen">
+                                        aktiv
+                                        </p>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                                <div style="display: flex; justify-content: left">
+                                    <img src="{% static 'images/hourglass_empty.svg' %}" style="width: 25px;height: max-content">
+                                    <p style="margin-left: 5px; margin-top: 2px; font-size: 0.9rem">{{ card.expiration_date }}</p>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <p>Karte: nicht verfügbar -> <a class="btn btn-link" data-toggle="modal" data-target="#modal{{account.iban}}" style="color: #6f42c1; text-decoration: none; background: transparent">jetzt beantragen</a></p>
                             <a class="btn btn-primary" id="ButtonUeberweisung" href="/accounts/konto/uberweisen">
                                 <p style="margin-top: 16px">Überweisung</p>
                             </a>
+     <div class="modal fade" id="modal{{account.iban}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modaltitle{{account.iban}}">Karte beantragen</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Ihre Karte wird von einem Mitarbeiter nach 1-2 Werktagen freigeschaltet.</p>
+              <p>Den Status ihrer Karte können sie jederzeit in ihrem Profil überprüfen.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Zurück</button>
+                    {% csrf_token %}
+                  <button class="btn btn-primary" type="submit" name="create_card" value={{account.iban}}>
+                      Jetzt Karte beantragen
+                  </button>
+          </div>
+        </div>
+      </div>
+    </div>
+                        {% endif %}
                         {% endif %}
                     </div>
                 </div>
@@ -261,7 +326,7 @@
 
             </div>
 
-            {% endfor %}
+                        {% endfor %}
             {% endif %}
 
         </div>
@@ -283,6 +348,31 @@ for (i = 0; i < coll.length; i++) {
     }
   });
 }
+
+$('#myModal').on('shown.bs.modal', function () {
+  $('#myInput').trigger('focus')
+})
+
+</script>
+
+<script type="text/javascript" language="javascript">
+$("form").submit(function () {
+    // prevent the default GET form behavior (name-value pairs)
+    event.preventDefault();
+
+    // Get the action attribute
+    var action = $("form").attr("action").toLowerCase();
+
+    // For each form element found, replace {elementName} in the action attribute to build a URL from template
+    var values = $("form").serialize().split("&");
+    for (var i = 0; i < values.length; i++) {
+        var tokens = values[i].split("=");
+        action = action.replace("{" + tokens[0].toLowerCase() + "}", tokens[1]);
+    }
+
+    // Send the user off to the URL w/ template elements replaced
+    window.location.href = action;
+});
 </script>
 
 {% endblock %}
