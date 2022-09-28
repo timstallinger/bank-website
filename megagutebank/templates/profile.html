@@ -261,15 +261,27 @@
                     <div class="card-body">
                         <p>Betrag: {{account.amount}}€</p>
                         {% if account.type == 0 %}
-                            <p>Typ: Tagesgeldkonto</p>
+                            <p>Typ: Sparkonto</p>
                         {% elif account.type == 1 %}
                             <p>Typ: Girokonto</p>
                         {% elif account.type == 2 %}
-                            <p>Typ: Sparkonto</p>
+                            <p>Typ: Tagesgeldkonto</p>
                         {% endif %}
-                        <p>Zinsen: {{account.interest}} % p.a.</p>
-                        <p>Negativzinsen: {{account.negative_interest}} % p.a.</p>
+                        <p>Zinsen: {{ account.interest }} % p.a.</p>
+                        <p>Negativzinsen: {{ account.negative_interest }} % p.a.</p>
                         <p>Status: {{account.status}}</p>
+                        {% if account.type == 2 %}
+                        {% for t in tagesgeld %}
+                        {% if t.iban == account.iban %}
+                        <p>Dauer Tagesgeld: {{t.time_period}} Jahre</p>
+                        {% if account.status == 1 %}
+                            <a class="btn btn-primary" id="ButtonKuendigen" href="/accounts/konto/kuendigen">
+                                <p style="margin-top: 16px">Kündigen</p>
+                            </a>
+                        {% endif %}
+                        {% endif %}
+                        {% endfor %}
+                        {% endif %}
                         {% if account.type == 1 %}
                         {% if account.iban in list %}
                         <div style="width: 100%;height:180px;background: #efe3d1;display: flex; justify-content: left; border-radius: 10px">
@@ -311,6 +323,7 @@
                         </div>
                         {% else %}
                         <p>Karte: nicht verfügbar -> <a class="btn btn-link" data-toggle="modal" data-target="#modal{{account.iban}}" style="color: #6f42c1; text-decoration: none; background: transparent">jetzt beantragen</a></p>
+                        {% endif %}
                             <a class="btn btn-primary" id="ButtonUeberweisung" href="/accounts/konto/uberweisen">
                                 <p style="margin-top: 16px">Überweisung</p>
                             </a>
@@ -337,12 +350,6 @@
         </div>
       </div>
     </div>
-                        {% endif %}
-                        {% endif %}
-                        {% if account.type == 2 and account.status == 1%}
-                            <a class="btn btn-primary"x id="ButtonKuendigen" href="/accounts/konto/kuendigen">
-                                <p style="margin-top: 16px">Kündigen</p>
-                            </a>
                         {% endif %}
 
                     </div>
@@ -378,6 +385,14 @@ for (i = 0; i < coll.length; i++) {
 $('#myModal').on('shown.bs.modal', function () {
   $('#myInput').trigger('focus')
 })
+
+calculate = function()
+{
+    var resources = document.getElementById('a1').value;
+    var = 100;
+    document.getElementById('a3').value = parseInt(resources)*parseInt(minutes);
+
+   }
 
 </script>
 

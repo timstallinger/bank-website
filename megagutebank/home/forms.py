@@ -165,11 +165,15 @@ class KontoForm(ModelForm):
         konto.owner = self.user
 
         if konto.type == 0:
-            konto.interest = 3.65
+            konto.interest = 0.0365
+            konto.negative_interest = 0.073
         elif konto.type == 1:
-            konto.interest = 2
-        elif konto.type == 2:
-            konto.interest = 0
+            if konto.time_period == 1:
+                konto.interest = 0.050
+            if konto.time_period == 3:
+                konto.interest = 0.070
+            if konto.time_period == 5:
+                konto.interest = 0.100
 
         if commit:
             konto.save()
@@ -198,9 +202,10 @@ class TagesgeldForm(KontoForm):
         konto.owner = self.user
         giro = None
         if konto.type == 0:
-            konto.interest = 3.65
+            konto.interest = 0.0365
+            konto.negative_interest = 0.073
         elif konto.type == 1:
-            konto.interest = 2
+            konto.interest = 0
         elif konto.type == 2:
             # Tagesgeldkonto
             giro = Account.objects.get(owner=self.user, type=1)

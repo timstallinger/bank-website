@@ -89,5 +89,3 @@ class Transaction(models.Model):
 
 class BankStatement(models.Model):
     time = models.DateTimeField(default=timezone.now)
-
-
