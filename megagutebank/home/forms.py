@@ -1,6 +1,7 @@
 from sqlite3 import IntegrityError
 from django import forms
 from django.forms import ModelForm
+from django.utils import timezone
 from django.contrib.auth.forms import UserCreationForm
 import random
 import datetime
@@ -248,12 +249,13 @@ class UberweisungForm(ModelForm):
         transaction.receiving_account = self.cleaned_data["zielkonto"]
         transaction.receiving_name = self.cleaned_data["empfangername"]
         transaction.standing_order = self.cleaned_data["dauerauftrag"]
+        transaction.time_of_transaction = timezone.now()
         if transaction.standing_order:
             transaction.standing_order_days = self.cleaned_data["zeit_input"]
 
         if sending_account.amount + sending_account.overdraft < transaction.amount:
             # Falls Konto nicht ausreichend gedeckt ist, abbrechen
-            return None
+            return 0
         sending_account.amount -= float(transaction.amount)
 
         # Wenn das Zielkonto auf unserer Datenbank existiert, bekommt der Empfänger das Geld
@@ -265,15 +267,17 @@ class UberweisungForm(ModelForm):
         receiver.amount += float(transaction.amount)
 
         # check transfer from savings account
-        if sending_account.type == 0:
+        '''if sending_account.type == 0:
             possible_accounts = Account.objects.filter(owner=sending_account.owner, type=1)
             if receiver not in possible_accounts:
                 commit = False
+                return 0'''
 
         if commit:
             transaction.save()
             sending_account.save()
             receiver.save()
+            return transaction
 
 
 class KuendigungForm(ModelForm):
@@ -307,6 +311,7 @@ class KuendigungForm(ModelForm):
         transaction.receiving_account = self.cleaned_data["zielkonto"]
         transaction.receiving_name = ""
         transaction.standing_order = 0
+        transaction.time_of_transaction = timezone.now()
 
         sending_account.amount -= float(transaction.amount)
         sending_account.status = 0
