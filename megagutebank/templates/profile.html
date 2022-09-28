@@ -59,7 +59,26 @@
              flex-direction: column;
              color: salmon;
         }
+        #ButtonKuendigen{
+             background: #ffffff;
+             width: 200px;
+             height: 40px;
+             border-radius: 10px;
+             box-shadow: 0 4px 8px #c5c5c5;
+             margin-left: 215px;
+             margin-top: 20px;
+             display: flex;
+             justify-content: center;
+             align-content: center;
+             flex-direction: column;
+             color: salmon;
+        }
         #ButtonUeberweisung:hover{
+            background: salmon;
+            color: white;
+            box-shadow: 0 4px 8px salmon;
+        }
+        #ButtonKuendigen:hover{
             background: salmon;
             color: white;
             box-shadow: 0 4px 8px salmon;
@@ -254,6 +273,12 @@
                                 <p style="margin-top: 16px">Überweisung</p>
                             </a>
                         {% endif %}
+                        {% if account.type == 2 %}
+                            <a class="btn btn-primary"x id="ButtonKuendigen" href="/accounts/konto/kuendigen">
+                                <p style="margin-top: 16px">Kündigen</p>
+                            </a>
+                        {% endif %}
+
                     </div>
                 </div>
                 </div>
