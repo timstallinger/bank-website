@@ -67,7 +67,7 @@ def signup(request):
     return render(request, 'register.html', {'form': form})
 
 def konto_create(request):
-    if not (request.user.is_authenticated and request.user.confirmed):
+    if not (request.user.is_authenticated and request.user.person.confirmed):
         return redirect('/error/', {'error': 'Sie sind nicht angemeldet oder Ihre Konto wurde noch nicht bestätigt.'})
     if request.method == 'POST':
         tagesgeld = request.POST.get("tagesgeld")
@@ -111,8 +111,8 @@ def profile_data(request):
 
 
 def konto_uberweisen(request):
-    if not (request.user.is_authenticated and request.user.confirmed):
-        return redirect('/error/', {'error': 'Sie sind nicht angemeldet oder Ihre Konto wurde noch nicht bestätigt.'})
+    if not (request.user.is_authenticated and request.user.person.confirmed):
+        return render(request, 'error.html', {'error': 'Sie sind nicht angemeldet oder Ihre Konto wurde noch nicht bestätigt.'})
     if request.method == 'POST':
         form = UberweisungForm(request.user, request.POST)
         if form.is_valid():
@@ -133,7 +133,7 @@ def konto_uberweisen(request):
 
 
 def konto_kuendigen(request):
-    if not (request.user.is_authenticated and request.user.confirmed):
+    if not (request.user.is_authenticated and request.user.person.confirmed):
         return redirect('/error/', {'error': 'Sie sind nicht angemeldet oder Ihre Konto wurde noch nicht bestätigt.'})
     if request.method == 'POST':
         form = KuendigungForm(request.user, request.POST)
