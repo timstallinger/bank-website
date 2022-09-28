@@ -1,0 +1,40 @@
+{% extends 'base_layout.html' %}
+
+{% block stylecontent %}
+    <style>
+        a:hover {
+            text-decoration: none;
+        }
+        
+        .foot {
+            position: absolute;
+            bottom: 0px;
+            left: 0px;
+            right: 0px;
+        }
+    </style>
+    <link rel="stylesheet" href="/static/common-styles.css">
+
+{% endblock %}
+        
+
+{% block bodycontent %}    
+    <div class="container text-center">
+        {% if user.is_authenticated %}
+            <h1>Willkommen {{ user.username }}!</h1>
+            <h4><em>Uns können Sie vertrauen.</em></h4>
+        {% else %}
+            <h1>Willkommen bei Mega Gute Bank</h1>
+            <h4><em>Uns können Sie vertrauen.</em></h4>
+        {% endif %}
+    </div>
+    
+    <br>
+    
+    <div class="container">
+    <h2>Da hat was nicht geklappt.</p>
+    </div>
+    </div>
+    
+    <br>
+{% endblock %}

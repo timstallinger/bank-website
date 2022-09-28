@@ -29,4 +29,5 @@ urlpatterns = [
     path("about/", TemplateView.as_view(template_name="about.html"), name="about"),
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
+    path('error/', TemplateView.as_view(template_name="error.html"), name="about"),
 ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

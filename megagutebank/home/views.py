@@ -109,8 +109,11 @@ def konto_uberweisen(request):
     if request.method == 'POST':
         form = UberweisungForm(request.user, request.POST)
         if form.is_valid():
-            form.save(request)
-            return redirect('user_profile')
+            suc = form.save(request)
+            if suc == 1:
+                return redirect('/accounts/transactions/')
+            else:
+                return redirect('/accounts/transactions/detail/' + str(suc.id))
         else:
             form = UberweisungForm(request.user)
     else:

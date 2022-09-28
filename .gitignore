@@ -5,6 +5,10 @@
 __pycache__
 db.sqlite3
 media
+megagutebank/settings.py
+
+# Docker #
+docker-compose.yml
 
 # Backup files # 
 *.bak 
