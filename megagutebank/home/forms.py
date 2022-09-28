@@ -308,7 +308,6 @@ class KuendigungForm(ModelForm):
         transaction.receiving_name = ""
         transaction.standing_order = 0
 
-
         sending_account.amount -= float(transaction.amount)
         sending_account.status = 0
 
