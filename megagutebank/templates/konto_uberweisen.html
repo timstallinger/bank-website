@@ -5,6 +5,11 @@
         <h4><em>Uns können Sie vertrauen.</em></h4>
     </div>
     <br>
+    {% if form.errors %}
+      <div class="alert alert-danger" role="alert">
+        {{ form.errors }}
+      </div>
+    {% endif %}
     <div class="container">
     <form method="POST">
       {% csrf_token %}

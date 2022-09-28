@@ -60,6 +60,8 @@ def signup(request):
             user = authenticate(username=username, password=raw_password)
             login(request, user)
             return redirect('home')
+        else:
+            print(form.errors)
     else:
         form = SignUpForm()
     return render(request, 'register.html', {'form': form})
@@ -73,7 +75,7 @@ def konto_create(request):
             form = TagesgeldForm(request.user, request.POST)
         if form.is_valid():
             form.save()
-            return redirect('user_profile')
+            return redirect('/accounts/profile/')
         else:
             form = KontoForm(request.user)
     else:
@@ -120,7 +122,8 @@ def konto_uberweisen(request):
         form = UberweisungForm(request.user)
     # get all accounts of the user
     accounts = Account.objects.filter(owner=request.user)
-
+    if len(accounts) == 0:
+        return redirect('/accounts/konto/erstellen')
     return render(request, 'konto_uberweisen.html', {'form': form, 'accounts': accounts, 'checked': False})
 
 

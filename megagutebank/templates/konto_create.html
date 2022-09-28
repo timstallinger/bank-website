@@ -6,6 +6,11 @@
     </div>
     <br>
     <div class="container">
+    {% if form.errors %}
+      <div class="alert alert-danger" role="alert">
+        {{ form.errors }}
+      </div>
+    {% endif %}
     <form method="POST">
       {% csrf_token %}
       <input id="id_tagesgeld" type="hidden" name="tagesgeld" value="0">

@@ -4,8 +4,12 @@
         <h1>Registrierungsseite für MGB</h1>
         <h4><em>Uns können Sie vertrauen.</em></h4>
     </div>
-    
     <br>
+    {% if form.errors %}
+      <div class="alert alert-danger" role="alert">
+        {{ form.errors }}
+      </div>
+    {% endif %}
     <div class="container">
     <form method="POST">
       {% csrf_token %}
@@ -26,9 +30,9 @@
       {% endfor %}
       <div class="row">
         <button type="submit" class="btn btn-danger" style="margin-top: 20px">Registrieren</button>
-
       </div>
     </form>
+    <p>
   </div>
 <!--TODO: Footer anpassen-->
 {% endblock %}

@@ -27,7 +27,8 @@ class SignUpForm(UserCreationForm):
                 'class': 'form-control',
                 'placeholder': 'Benutzernamen eingeben',
             }))
-    email = forms.EmailField(max_length=254,
+    email = forms.EmailField(max_length=254, 
+        error_messages={'invalid': 'Bitte geben Sie eine gültige E-Mail-Adresse ein.'},
         widget=forms.TextInput(
             attrs={
                 'class': 'form-control',
@@ -71,6 +72,11 @@ class SignUpForm(UserCreationForm):
         user.first_name = self.cleaned_data["vorname"]
         user.last_name = self.cleaned_data["nachname"]
         user.email = self.cleaned_data["email"]
+        check_user = self.cleaned_data["username"]
+        check_user = Person.objects.filter(username=check_user)
+        if check_user.exists():
+            print("Username already exists")
+            raise forms.ValidationError("Dieser Username ist bereits vergeben.")
         if commit:
             user.save()
         return user
@@ -82,10 +88,10 @@ konto_typen = [
     ('Tagesgeldkonto', 'Tagesgeldkonto'),
     ]
 typ_to_int = {
-            'sparkonto': 0,
-            'girokonto': 1,
-            'Tagesgeldkonto': 2,
-        }
+        'sparkonto': 0,
+        'girokonto': 1,
+        'Tagesgeldkonto': 2,
+    }
 konto_cntry = [
     ('DE', 'Deutschland'),
     ('CH', 'Schweiz'),
@@ -126,6 +132,7 @@ class KontoForm(ModelForm):
         widget=forms.NumberInput(
             attrs={
                 'class': 'form-control',
+                'placeholder': 'Betrag eingeben',
             }))
     
     class Meta:
@@ -176,7 +183,11 @@ class TagesgeldForm(KontoForm):
         print("Test")
         konto = super(TagesgeldForm, self).save(commit=False)
         konto.name = self.cleaned_data["konto_name"]
-        konto.amount = self.cleaned_data["tagesgeld_amount"]
+        amount = self.cleaned_data["tagesgeld_amount"]
+        if not amount:
+            konto.amount = 0
+        else:
+            konto.amount = amount
         konto.interestrate = 0
         konto.time_period = self.cleaned_data["tagesgeld_dauer"]
         # generate valid iban
@@ -186,20 +197,23 @@ class TagesgeldForm(KontoForm):
 
         konto.type = typ_to_int[self.cleaned_data["konto_typ"]]
         konto.owner = self.user
-
+        giro = None
         if konto.type == 0:
             konto.interest = 3.65
         elif konto.type == 1:
             konto.interest = 2
         elif konto.type == 2:
+            # Tagesgeldkonto
+            giro = Account.objects.get(owner=self.user, type=1)
+            if giro.amount < konto.amount:
+                raise forms.ValidationError("Sie haben nicht genügend Geld auf Ihrem Girokonto.")
+            giro.amount -= float(konto.amount)
             konto.interest = 0
-        # Bei Tagesgeldkonto wird der Betrag von der Girocard abgebucht
-        giro = Account.objects.get(owner=self.user, type=1)
-        giro.amount -= konto.amount
-
+        
         if commit:
             konto.save()
-            giro.save()
+            if giro:
+                giro.save()
         return konto
 
 class UberweisungForm(ModelForm):

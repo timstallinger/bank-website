@@ -4,13 +4,18 @@
 
     <div class="container text-center">
         {% if trans.standing_order %}
-                    <h1>Transaktionsdetails Ihres Dauerauftrags {{trans.id}}</h1>
+            <h1>Transaktionsdetails Ihres Dauerauftrags {{trans.id}}</h1>
         {%else%}
         <h1>Transaktionsdetails Ihrer Überweisung {{trans.id}}</h1>
         {%endif%}
         <h4><em>Uns können Sie vertrauen.</em></h4>
     </div>
     <br>
+    {% if form.errors %}
+      <div class="alert alert-danger" role="alert">
+        {{ form.errors }}
+      </div>
+    {% endif %}
     <div class="container">
     <!-- List transaction details in cards -->
     <div class="row">
