@@ -122,6 +122,11 @@ class KontoForm(ModelForm):
     tagesgeld_dauer = forms.CharField(max_length=30, required=False, widget=forms.Select(choices=tagesgeld_options, attrs={
         'class': 'btn btn-primary dropdown-toggle',
     }))
+    tagesgeld_amount = forms.DecimalField(max_digits=10, decimal_places=2, required=False, 
+        widget=forms.NumberInput(
+            attrs={
+                'class': 'form-control',
+            }))
     
     class Meta:
         model = Account
@@ -171,7 +176,7 @@ class TagesgeldForm(KontoForm):
         print("Test")
         konto = super(TagesgeldForm, self).save(commit=False)
         konto.name = self.cleaned_data["konto_name"]
-        konto.amount = 0
+        konto.amount = self.cleaned_data["tagesgeld_amount"]
         konto.interestrate = 0
         konto.time_period = self.cleaned_data["tagesgeld_dauer"]
         # generate valid iban
@@ -188,9 +193,13 @@ class TagesgeldForm(KontoForm):
             konto.interest = 2
         elif konto.type == 2:
             konto.interest = 0
+        # Bei Tagesgeldkonto wird der Betrag von der Girocard abgebucht
+        giro = Account.objects.get(owner=self.user, type=1)
+        giro.amount -= konto.amount
 
         if commit:
             konto.save()
+            giro.save()
         return konto
 
 class UberweisungForm(ModelForm):

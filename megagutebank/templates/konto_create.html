@@ -22,16 +22,20 @@
         var kontotyp = document.getElementById("id_konto_typ");
         var tagesgeld = document.getElementById("id_tagesgeld");
         var dauer = document.getElementById("div_id_tagesgeld_dauer");
+        var amount = document.getElementById("div_id_tagesgeld_amount");
         dauer.style.display = "none";
+        amount.style.display = "none";
 
         kontotyp.addEventListener( 'change', function() {
           // if selection of kontotyp is "Tagesgeldkonto"
           if (kontotyp.value == "Tagesgeldkonto") {
             tagesgeld.value="1";
             dauer.style.display = "block";
+            amount.style.display = "block";
           } else {
             tagesgeld.value="0";
             dauer.style.display = "none";
+            amount.style.display = "none";
           }
         });
       </script>
