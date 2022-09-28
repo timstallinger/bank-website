@@ -62,7 +62,6 @@ class DebitCard(models.Model):
 
 
 class Card(models.Model):
-    id = models.CharField(max_length=30, primary_key=True)
     cvv = models.IntegerField()
     pin = models.IntegerField()
     state = models.BooleanField(default=1)
@@ -77,20 +76,18 @@ class Tan(models.Model):
 
 
 class Transaction(models.Model):
-    id = models.IntegerField(primary_key=True, auto_created=True)
     standing_order = models.BooleanField(default=0)
     standing_order_days = models.IntegerField(null=True, default=None,blank=True)
     time_of_transaction = models.DateTimeField(default=timezone.now)
     amount = models.FloatField()
-    sending_account = models.ForeignKey(Account, on_delete=models.DO_NOTHING, related_name='sending_account')
+    sending_account = models.ForeignKey(Account, on_delete=models.RESTRICT, related_name='sending_account')
     receiving_account = models.CharField(max_length=34)
     receiving_name = models.CharField(max_length=30,null=True, default=None,blank=True)
     usage = models.CharField(max_length=140, null=True, default=None,blank=True)
     approved = models.BooleanField(default=0)
-    approved_by = models.ForeignKey(Employee, on_delete=models.DO_NOTHING, null=True, blank=True, default=None)
+    approved_by = models.ForeignKey(Employee, on_delete=models.RESTRICT, null=True, blank=True, default=None)
 
 class BankStatement(models.Model):
-    id = models.IntegerField(primary_key=True)
     time = models.DateTimeField(default=timezone.now)
 
 

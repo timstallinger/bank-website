@@ -89,16 +89,11 @@ WSGI_APPLICATION = 'megagutebank.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-
         'NAME': 'postgres',
-
         'USER': 'postgres',
-
-        'PASSWORD': 'admin',
-
+        'PASSWORD': 'adas1234',
         'HOST': 'localhost',
-
-        'PORT': '5432',
+        'PORT': '5433',
     }
 }
 

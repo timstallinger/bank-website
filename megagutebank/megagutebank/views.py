@@ -9,3 +9,5 @@ def index(request):
         for account in request.user.account_set.all():
             kontostand += account.amount
         return render(request, 'index.html', {'user': request.user, 'kontostand': kontostand})
+    else:
+        return render(request, 'index.html')
