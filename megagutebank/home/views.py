@@ -15,11 +15,6 @@ from .forms import SignUpForm, KontoForm, UberweisungForm, TagesgeldForm, Kuendi
 
 from datetime import date
 
-def employee(request):
-    if request.user.is_authenticated and request.user.is_staff:
-        bankdaten = Bank.objects.get(bic="MALADE51KRE")
-        return render(request, 'employee.html', {'user': request.user, 'bankdaten': bankdaten})
-
 def manage(request):
     if request.user.is_authenticated and request.user.is_staff:
         if request.POST.get("button_declined"):

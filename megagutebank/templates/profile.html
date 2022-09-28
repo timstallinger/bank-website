@@ -272,7 +272,7 @@
                         <p>Status: {{account.status}}</p>
                         {% if account.type == 1 %}
                         {% if account.iban in list %}
-                        <div style="width: 100%;height:200px;background: #efe3d1;display: flex; justify-content: left; border-radius: 10px">
+                        <div style="width: 100%;height:180px;background: #efe3d1;display: flex; justify-content: left; border-radius: 10px">
                             <img src="{% static 'images/gold-karte.png' %}" style="width: 200px;height: max-content;margin-left: -22px">
                             <h4 style="margin-top: 15px">Ihre Girocard.</h4>
                             {% for card in cards %}
@@ -288,12 +288,13 @@
                                     <p style="margin-left: 5px; margin-top: 2px; font-size: 0.9rem">{{ card.pin }}</p>
                                 </div>
                                 <div style="display: flex; justify-content: left; margin-bottom: -10px">
-                                    <img src="{% static 'images/check.svg' %}" style="width: 25px;height: max-content">
                                     {% if card.state == 0 %}
+                                    <img src="{% static 'images/cancel.svg' %}" style="width: 25px;height: max-content">
                                     <p style="margin-left: 5px; margin-top: 2px; font-size: 0.9rem; color: crimson">
                                         inaktiv
                                         </p>
                                         {% elif card.state == 1 %}
+                                    <img src="{% static 'images/check.svg' %}" style="width: 25px;height: max-content">
                                     <p style="margin-left: 5px; margin-top: 2px; font-size: 0.9rem; color: limegreen">
                                         aktiv
                                         </p>

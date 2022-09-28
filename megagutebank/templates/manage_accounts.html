@@ -1,0 +1,305 @@
+{% extends 'base_layout_employee.html' %}
+
+{% block stylecontent %}
+    <style>
+        a:hover {
+            text-decoration: none;
+        }
+
+        .foot {
+            position: absolute;
+            bottom: 0px;
+            left: 0px;
+            right: 0px;
+        }
+    </style>
+    <link rel="stylesheet" href="/static/common-styles.css">
+
+{% endblock %}
+
+
+{% block bodycontent %}
+    <div class="container text-center">
+        {% if user.is_authenticated %}
+            <h1>Willkommen {{ user.username }}!</h1>
+            <h4><em>Uns können Sie vertrauen.</em></h4>
+        {% else %}
+            <h1>Willkommen bei Mega Gute Bank</h1>
+            <h4><em>Uns können Sie vertrauen.</em></h4>
+        {% endif %}
+    </div>
+    <br>
+    <div class="container" style="margin-left: 0; width: 100%; overflow: auto">
+        {% if user.is_authenticated %}
+            <h4>Bankkonten:</h4>
+            <!-- Datepicker for startdate and enddate filter-->
+<!--            <div class="row">-->
+<!--                <div class="col-md-6">-->
+<!--                    <div class="form-group">-->
+<!--                        <label for="startdate">Startdatum:</label>-->
+<!--                        <input type="date" class="form-control" id="startdate" name="startdate">-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="col-md-6">-->
+<!--                    <div class="form-group">-->
+<!--                        <label for="enddate">Enddatum:</label>-->
+<!--                        <input type="date" class="form-control" id="enddate" name="enddate">-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <p>-->
+<!--                <div class="form-group">-->
+<!--                    <button type="button" class="btn btn-primary" id="filter" name="filter">Filter anwenden</button>-->
+<!--                </div>-->
+<!--                <p>-->
+<!--                <div class="form-group">-->
+<!--                    <button type="button" class="btn btn-danger" id="deletefilter" name="deletefilter">Alle Filter löschen</button>-->
+<!--                </div>-->
+            <table class="table table-hover table-dark" id="accounts" style="table-layout: fixed; width: auto">
+            <thead>
+                <tr>
+                    <th scope="col" onclick=sortTable(0)>IBAN</th>
+                    <th scope="col" style="max-width: 100px" onclick=sortTable(1)>Besitzer (ID)</th>
+                    <th scope="col" style="width: 3%" onclick=sortTable(2)>Typ</th>
+                    <th scope="col" onclick=sortTable(3)>Name</th>
+                    <th scope="col" onclick=sortTable(4)>Betrag</th>
+                    <th scope="col" onclick=sortTable(5)>Zins</th>
+                    <th scope="col" onclick=sortTable(6)>Neg.-Zins</th>
+                    <th scope="col" onclick=sortTable(7)>Status</th>
+                    <th scope="col" onclick=sortTable(8)>Änderung Mitarbeiter</th>
+                    <th scope="col" onclick=sortTable(9)>Überz.</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for account in accounts %}
+                <tr class="table-primary">
+                    <th scope="row">{{account.iban}}</th>
+                    <th scope="row" style="max-width: 20px">{{account.owner_id}}</th>
+                    <th scope="row">{{account.type}}</th>
+                    <th scope="row" style="max-width: 250px; text-overflow: ellipsis;  white-space: nowrap; overflow: hidden">{{account.name}}</th>
+                    <th scope="row">{{account.amount}}</th>
+                    <th scope="row">{{account.interest}}</th>
+                    <th scope="row">{{account.negative_interest}}</th>
+                    <th scope="row">
+                        <div class="dropdown">
+                            <form method="post">
+                                {% csrf_token %}
+                          <button value="{{account.iban}}" class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton{{account.iban}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              {% if account.status == 1 %}
+                              bestätigt
+                              {% elif account.status == -1 %}
+                              abgelehnt
+                              {% elif account.status == 0 %}
+                              ausstehend
+                              {% endif %}
+                          </button>
+                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton{{account.iban}}">
+                            <button name="button_declined" class="dropdown-item" value={{account.iban}}>abgelehnt</button>
+                            <button name="button_approved" class="dropdown-item" value={{account.iban}}>bestätigt</button>
+                          </div>
+                            </form>
+                        </div>
+                    </th>
+                    <th scope="row">{{account.employee_id}}</th>
+                    <th scope="row" style="min-width: 200px">
+                        <form id="overdraft_form" method="post">
+                            {% csrf_token %}
+                        <div class="form-group">
+                            <input type="hidden" name="ov_iban" value="{{ account.iban }}">
+                            <input type="number" name="ov_field" id="ov" class="form-control" placeholder={{account.overdraft}}>
+                        </div>
+                        </form>
+                    </th>
+                <!--edit button-->
+                <!--<th scope="row"><a href="/accounts/transactions/detail/{{trans.id}}"><button class="btn btn-danger btn-block" id="sign_in"><i class="fa fa-sign-in"></i> Details</button></a></th>-->
+                </tr>
+            {% endfor %}
+            </tbody>
+        {% else %}
+        <a href="/accounts/register"><button class="btn btn-primary btn-block" id="acc"><i class="fa fa-user"></i> Neuen Bankaccount erstellen</button></a>
+        <br>
+        <a href="accounts/login/"><button class="btn btn-danger btn-block" id="sign_in"><i class="fa fa-sign-in"></i> Einloggen</button></a>
+        {% endif %}
+            </table>
+    </div>
+
+
+    <div class="container" style="margin-left: 5px; width: 100%; margin-top: 30px">
+        {% if user.is_authenticated %}
+            <h4>Bankkarten:</h4>
+            <table class="table table-hover table-dark" id="cards" style="table-layout: fixed; width: auto">
+            <thead>
+                <tr>
+                    <th scope="col" onclick=sortTable2(0)>IBAN</th>
+                    <th scope="col" style="max-width: 100px" onclick=sortTable2(1)>Karten-ID</th>
+                    <th scope="col" style="width: 3%" onclick=sortTable2(2)>CVV</th>
+                    <th scope="col" onclick=sortTable2(3)>PIN</th>
+                    <th scope="col" onclick=sortTable2(4)>Status</th>
+                    <th scope="col" onclick=sortTable2(5)>Gültigkeitsdatum</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for card in cards %}
+                <tr class="table-primary">
+                    <th scope="row">{{card.account_id}}</th>
+                    <th scope="row" style="max-width: 20px">{{card.id}}</th>
+                    <th scope="row">{{card.cvv}}</th>
+                    <th scope="row" style="max-width: 250px; text-overflow: ellipsis;  white-space: nowrap; overflow: hidden">{{card.pin}}</th>
+                    <th scope="row">
+                        <div class="dropdown">
+                            <form method="post">
+                                {% csrf_token %}
+                          <button value="{{account.iban}}" class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton{{card.id}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              {% if card.state == -1 %}
+                              Konto inaktiv
+                              {% elif card.state == 0 %}
+                              inaktiv
+                              {% elif card.state == 1 %}
+                              aktiv
+                              {% endif %}
+                          </button>
+                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton{{card.id}}">
+                              <button name="button_active" class="dropdown-item" value={{card.id}}>aktiv</button>
+                              <button name="button_inactive" class="dropdown-item" value={{card.id}}>inaktiv</button></div>
+                            </form>
+                        </div>
+                    </th>
+                    <th scope="row">{{card.expiration_date}}</th>
+                <!--edit button-->
+                <!--<th scope="row"><a href="/accounts/transactions/detail/{{trans.id}}"><button class="btn btn-danger btn-block" id="sign_in"><i class="fa fa-sign-in"></i> Details</button></a></th>-->
+                </tr>
+            {% endfor %}
+            </tbody>
+        {% else %}
+        <a href="/accounts/register"><button class="btn btn-primary btn-block" id="acc"><i class="fa fa-user"></i> Neuen Bankaccount erstellen</button></a>
+        <br>
+        <a href="accounts/login/"><button class="btn btn-danger btn-block" id="sign_in"><i class="fa fa-sign-in"></i> Einloggen</button></a>
+        {% endif %}
+            </table>
+    </div>
+
+{% endblock %}
+
+{% block scriptcontent %}
+
+<script>
+
+// when user presses on filter button, the user will be redirected to the filtered transactions page
+document.getElementById("filter").addEventListener("click", function(){
+    var startdate = document.getElementById("startdate").value;
+    var enddate = document.getElementById("enddate").value;
+    window.location.href = "/accounts/transactions/?startdate=" + startdate + "&endDate=" + enddate;
+});
+document.getElementById("deletefilter").addEventListener("click", function(){
+    window.location.href = "/accounts/transactions/";
+});
+function sortTable(n) {
+  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+  table = document.getElementById("accounts");
+  switching = true;
+  // Set the sorting direction to ascending:
+  dir = "asc";
+  /* Make a loop that will continue until
+  no switching has been done: */
+  while (switching) {
+    // Start by saying: no switching is done:
+    switching = false;
+    rows = table.rows;
+    /* Loop through all table rows (except the
+    first, which contains table headers): */
+    for (i = 1; i < (rows.length - 1); i++) {
+      // Start by saying there should be no switching:
+      shouldSwitch = false;
+      /* Get the two elements you want to compare,
+      one from current row and one from the next: */
+      x = rows[i].getElementsByTagName("th")[n];
+      y = rows[i + 1].getElementsByTagName("th")[n];
+      /* Check if the two rows should switch place,
+      based on the direction, asc or desc: */
+        if (dir == "asc") {
+            if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+            // If so, mark as a switch and break the loop:
+            shouldSwitch = true;
+            break;
+            }
+        } else if (dir == "desc") {
+            if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+            // If so, mark as a switch and break the loop:
+            shouldSwitch = true;
+            break;
+            }
+        }
+    }
+    if (shouldSwitch) {
+      /* If a switch has been marked, make the switch
+      and mark that a switch has been done: */
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+      // Each time a switch is done, increase this count by 1:
+      switchcount ++;
+    } else {
+      /* If no switching has been done AND the direction is "asc",
+      set the direction to "desc" and run the while loop again. */
+      if (switchcount == 0 && dir == "asc") {
+        dir = "desc";
+        switching = true;
+      }
+    }
+  }
+}
+function sortTable2(n) {
+  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+  table = document.getElementById("cards");
+  switching = true;
+  // Set the sorting direction to ascending:
+  dir = "asc";
+  /* Make a loop that will continue until
+  no switching has been done: */
+  while (switching) {
+    // Start by saying: no switching is done:
+    switching = false;
+    rows = table.rows;
+    /* Loop through all table rows (except the
+    first, which contains table headers): */
+    for (i = 1; i < (rows.length - 1); i++) {
+      // Start by saying there should be no switching:
+      shouldSwitch = false;
+      /* Get the two elements you want to compare,
+      one from current row and one from the next: */
+      x = rows[i].getElementsByTagName("th")[n];
+      y = rows[i + 1].getElementsByTagName("th")[n];
+      /* Check if the two rows should switch place,
+      based on the direction, asc or desc: */
+        if (dir == "asc") {
+            if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+            // If so, mark as a switch and break the loop:
+            shouldSwitch = true;
+            break;
+            }
+        } else if (dir == "desc") {
+            if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+            // If so, mark as a switch and break the loop:
+            shouldSwitch = true;
+            break;
+            }
+        }
+    }
+    if (shouldSwitch) {
+      /* If a switch has been marked, make the switch
+      and mark that a switch has been done: */
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+      // Each time a switch is done, increase this count by 1:
+      switchcount ++;
+    } else {
+      /* If no switching has been done AND the direction is "asc",
+      set the direction to "desc" and run the while loop again. */
+      if (switchcount == 0 && dir == "asc") {
+        dir = "desc";
+        switching = true;
+      }
+    }
+  }
+}
+</script>
+{% endblock %}
