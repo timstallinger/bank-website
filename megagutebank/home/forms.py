@@ -78,7 +78,7 @@ class SignUpForm(UserCreationForm):
         check_user = Person.objects.filter(username=check_user)
         if check_user.exists():
             raise forms.ValidationError("Dieser Username ist bereits vergeben.")
-        user.confirmed = False
+        user.confirmed = 0
 
         # Generate iBan for Girokonto
         blz_fill = 100100500000000000
