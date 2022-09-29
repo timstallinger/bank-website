@@ -2,7 +2,7 @@ from django.contrib.auth import login, authenticate
 
 from django.shortcuts import render, redirect
 
-from home.models import Bank, Account, TagesgeldAccount, Employee
+from home.models import Bank, Account, TagesgeldAccount, Employee, Person
 
 def index(request):
     kontostand = 0
@@ -12,6 +12,9 @@ def index(request):
             # create employee instance, if not exists
 
             if not Employee.objects.filter(person_id=request.user.id).exists():
+                if not Person.objects.filter(id=request.user.id).exists():
+                    p = Person.objects.create(user_ptr_id=request.user.id, birthday="2000-05-10" ,confirmed=True)
+                    p.save()
                 e = Employee.objects.create(person_id=request.user.id)
                 e.save()
 
