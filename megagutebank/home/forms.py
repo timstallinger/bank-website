@@ -100,6 +100,8 @@ class SignUpForm(UserCreationForm):
         giro_account.amount = 50
         giro_account.status = 1
         giro_account.overdraft = 0
+        giro_account.interest = 0
+        giro_account.negative_interest = 0.073
 
         if commit:
             user.save()
@@ -184,13 +186,14 @@ class KontoForm(ModelForm):
         # generate valid iban
         konto.iban = self.gen_iban(self.cleaned_data["konto_standort"])
 
-        self.gen_iban(self.cleaned_data["konto_standort"])
-
         konto.type = typ_to_int[self.cleaned_data["konto_typ"]]
         konto.owner = self.user
 
         if konto.type == 0:
             konto.interest = 0.0365
+            konto.negative_interest = 0
+        if konto.type == 0:
+            konto.interest = 0
             konto.negative_interest = 0.073
         elif konto.type == 2:
             if konto.time_period == 1:
@@ -219,9 +222,7 @@ class TagesgeldForm(KontoForm):
         konto.interestrate = 0
         konto.time_period = self.cleaned_data["tagesgeld_dauer"]
         # generate valid iban
-        konto.iban = self.cleaned_data["konto_standort"] + str(10010005) + str(random.randint(1000000000, 9999999999))
-
-        self.gen_iban(self.cleaned_data["konto_standort"])
+        konto.iban = self.gen_iban(self.cleaned_data["konto_standort"])
 
         konto.type = typ_to_int[self.cleaned_data["konto_typ"]]
         konto.owner = self.user
