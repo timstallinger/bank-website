@@ -97,10 +97,10 @@
         <tbody>
           {% for trans in trans %}
           <tr class="table-primary">
-            <th scope="row">{{trans.receiving_name}}</th>
-            <th scope="row">{{trans.time_of_transaction}}</th>
-            <th scope="row">{{trans.receiving_account}}</th>
-            <th scope="row">{{trans.usage}}</th>
+            <th scope="row">{{trans.name_receiver}}</th>
+            <th scope="row">{{trans.timestamp}}</th>
+            <th scope="row">{{trans.iban_receiver}}</th>
+            <th scope="row">{{trans.reference}}</th>
             {% if trans.amount < 0%}
             <th scope="row" class="text-danger">{{trans.amount}}</th>
             {%else%}

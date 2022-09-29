@@ -2,6 +2,7 @@ from pyexpat import model
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
+from django.db.models import CheckConstraint, Q, F
 
 
 class Bank(models.Model):
@@ -78,14 +79,25 @@ class Tan(models.Model):
 class Transaction(models.Model):
     standing_order = models.BooleanField(default=0)
     standing_order_days = models.IntegerField(null=True, default=None,blank=True)
-    time_of_transaction = models.DateTimeField(default=timezone.now)
+    timestamp = models.DateTimeField(default=timezone.now)
     amount = models.FloatField()
-    sending_account = models.ForeignKey(Account, on_delete=models.RESTRICT, related_name='sending_account')
-    receiving_account = models.CharField(max_length=34)
-    receiving_name = models.CharField(max_length=30,null=True, default=None,blank=True)
-    usage = models.CharField(max_length=140, null=True, default=None,blank=True)
+    iban_sender = models.ForeignKey(Account, on_delete=models.RESTRICT, related_name='iban_sender')
+    iban_receiver = models.CharField(max_length=34)
+    name_receiver = models.CharField(max_length=30,null=True, default=None,blank=True)
+    reference = models.CharField(max_length=140, null=True, default=None,blank=True)
     approved = models.BooleanField(default=0)
     approved_by = models.ForeignKey(Employee, on_delete=models.RESTRICT, null=True, blank=True, default=None)
+    class Meta:
+        constraints = [
+            CheckConstraint(
+                check=Q(amount__gt=0),
+                name = 'check_amount',
+            ),
+        ]
 
 class BankStatement(models.Model):
     time = models.DateTimeField(default=timezone.now)
+
+
+class ExternalTransaction(Transaction):
+    sending_bank = models.ForeignKey(Bank, on_delete=models.RESTRICT)

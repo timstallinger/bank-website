@@ -268,43 +268,43 @@ class UberweisungForm(ModelForm):
         fields = ('betrag', 'zielkonto', 'verwendungszweck',)
 
     def save(self, request, commit=True):
-        sending_account = request.POST.dict().get("senderkonto")
-        sending_account = Account.objects.get(pk=sending_account)
+        iban_sender = request.POST.dict().get("senderkonto")
+        iban_sender = Account.objects.get(pk=iban_sender)
 
         transaction = super(UberweisungForm, self).save(commit=False)
         transaction.amount = self.cleaned_data["betrag"]
-        transaction.usage = self.cleaned_data["verwendungszweck"]
-        transaction.sending_account = sending_account
-        transaction.receiving_account = self.cleaned_data["zielkonto"]
-        transaction.receiving_name = self.cleaned_data["empfangername"]
+        transaction.reference = self.cleaned_data["verwendungszweck"]
+        transaction.iban_sender = iban_sender
+        transaction.iban_receiver = self.cleaned_data["zielkonto"]
+        transaction.name_receiver = self.cleaned_data["empfangername"]
         transaction.standing_order = self.cleaned_data["dauerauftrag"]
-        transaction.time_of_transaction = timezone.now()
+        transaction.timestamp = timezone.now()
         if transaction.standing_order:
             transaction.standing_order_days = self.cleaned_data["zeit_input"]
 
-        if sending_account.amount + sending_account.overdraft < transaction.amount:
+        if iban_sender.amount + iban_sender.overdraft < transaction.amount:
             # Falls Konto nicht ausreichend gedeckt ist, abbrechen
             return 0
-        sending_account.amount -= float(transaction.amount)
+        iban_sender.amount -= float(transaction.amount)
 
         # Wenn das Zielkonto auf unserer Datenbank existiert, bekommt der Empfänger das Geld
         # Ansonsten wird das Geld nicht überwiesen, aber die Transaktion wird erstellt
         try:
-            receiver = Account.objects.get(iban=transaction.receiving_account)
+            receiver = Account.objects.get(iban=transaction.iban_receiver)
         except Account.DoesNotExist:
-            receiver = sending_account
+            receiver = iban_sender
         receiver.amount += float(transaction.amount)
 
         # check transfer from savings account
-        '''if sending_account.type == 0:
-            possible_accounts = Account.objects.filter(owner=sending_account.owner, type=1)
+        '''if iban_sender.type == 0:
+            possible_accounts = Account.objects.filter(owner=iban_sender.owner, type=1)
             if receiver not in possible_accounts:
                 commit = False
                 return 0'''
 
         if commit:
             transaction.save()
-            sending_account.save()
+            iban_sender.save()
             receiver.save()
             return transaction
 
@@ -328,34 +328,34 @@ class KuendigungForm(ModelForm):
         fields = ()
 
     def save(self, request, commit=True):
-        sending_account = request.POST.dict().get("senderkonto")
-        sending_account = Account.objects.get(pk=sending_account)
+        iban_sender = request.POST.dict().get("senderkonto")
+        iban_sender = Account.objects.get(pk=iban_sender)
 
         transaction = super(KuendigungForm, self).save(commit=False)
-        transaction.amount = sending_account.amount
-        transaction.usage = f"Auflösung von Konto {sending_account.iban}"
-        transaction.sending_account = sending_account
-        transaction.receiving_account = self.cleaned_data["zielkonto"]
-        transaction.receiving_name = ""
+        transaction.amount = iban_sender.amount
+        transaction.reference = f"Auflösung von Konto {iban_sender.iban}"
+        transaction.iban_sender = iban_sender
+        transaction.iban_receiver = self.cleaned_data["zielkonto"]
+        transaction.name_receiver = ""
         transaction.standing_order = 0
-        transaction.time_of_transaction = timezone.now()
+        transaction.timestamp = timezone.now()
 
-        sending_account.amount -= float(transaction.amount)
-        sending_account.status = 0
+        iban_sender.amount -= float(transaction.amount)
+        iban_sender.status = 0
 
         # Wenn das Zielkonto auf unserer Datenbank existiert, bekommt der Empfänger das Geld
         # Ansonsten wird das Geld nicht überwiesen, aber die Transaktion wird erstellt
         try:
-            receiver = Account.objects.get(iban=transaction.receiving_account)
+            receiver = Account.objects.get(iban=transaction.iban_receiver)
         except Account.DoesNotExist:
-            receiver = sending_account
+            receiver = iban_sender
         receiver.amount += float(transaction.amount)
 
         # check if cancelation of cd_account
-        if sending_account.type == 2:
+        if iban_sender.type == 2:
 
             # cancelation only possible if transaction account exists to send money to
-            possible_accounts = Account.objects.filter(owner=sending_account.owner, type=1)
+            possible_accounts = Account.objects.filter(owner=iban_sender.owner, type=1)
             if receiver not in possible_accounts:
                 commit = False
         else:
@@ -363,5 +363,5 @@ class KuendigungForm(ModelForm):
 
         if commit:
             transaction.save()
-            sending_account.save()
+            iban_sender.save()
             receiver.save()

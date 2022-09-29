@@ -174,12 +174,12 @@ def transactions(request):
     accounts = Account.objects.filter(owner=request.user)
     # get all transactions of user
     for account in accounts:
-        for t in Transaction.objects.filter(sending_account=account):
+        for t in Transaction.objects.filter(iban_sender=account):
             t.amount = -t.amount
             trans.append(t)
-        for t in Transaction.objects.filter(receiving_account=account.iban):
+        for t in Transaction.objects.filter(iban_receiver=account.iban):
             trans.append(t)
-    trans.sort(key=lambda x: x.time_of_transaction, reverse=True)
+    trans.sort(key=lambda x: x.timestamp, reverse=True)
 
     return render(request, 'standing_transactions.html', {'gesendet': trans})
 
@@ -211,9 +211,9 @@ class TransactionApiView(APIView):
         transactions = self.get_queryset(request, startDate, endDate)
 
         # sort transactions by time
-        transactions.sort(key=lambda x: x.time_of_transaction, reverse=True)
+        transactions.sort(key=lambda x: x.timestamp, reverse=True)
         for t in transactions:
-            t.time_of_transaction = t.time_of_transaction.strftime("%Y.%m.%d %H:%M")
+            t.timestamp = t.timestamp.strftime("%Y.%m.%d %H:%M")
 
         serializer = TransactionSerializer(transactions, many=True)
         
@@ -241,11 +241,11 @@ class TransactionApiView(APIView):
         accounts = Account.objects.filter(owner=request.user)
         for account in accounts:
             if startDate and endDate:
-                sending = Transaction.objects.filter(sending_account=account, time_of_transaction__range=[startDate, endDate])
-                receiving = Transaction.objects.filter(receiving_account=account.iban, time_of_transaction__range=[startDate, endDate])
+                sending = Transaction.objects.filter(iban_sender=account, timestamp__range=[startDate, endDate])
+                receiving = Transaction.objects.filter(iban_receiver=account.iban, timestamp__range=[startDate, endDate])
             else:
-                sending = Transaction.objects.filter(sending_account=account)
-                receiving = Transaction.objects.filter(receiving_account=account.iban)
+                sending = Transaction.objects.filter(iban_sender=account)
+                receiving = Transaction.objects.filter(iban_receiver=account.iban)
             # set sending amount negative
             for t in sending:
                 t.amount = int(-t.amount)
@@ -291,12 +291,12 @@ class TransactionDetailApiView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = TransactionSerializer(transaction)
         # get sender from transaction
-        sender_account = Account.objects.get(iban=transaction.sending_account.iban).owner
+        sender_account = Account.objects.get(iban=transaction.iban_sender.iban).owner
         try:
-            receiver_account = Account.objects.get(iban=transaction.receiving_account).owner
+            receiver_account = Account.objects.get(iban=transaction.iban_receiver).owner
         except Account.DoesNotExist:
             receiver_account = None
-        time = transaction.time_of_transaction.strftime("%Y.%m.%d, %H:%M")
+        time = transaction.timestamp.strftime("%Y.%m.%d, %H:%M")
         return Response({'trans': serializer.data, 'sender': sender_account, 'receiver': receiver_account, 'time':time})
     def get_object(self, tid):
         '''
@@ -309,8 +309,8 @@ class TransactionDetailApiView(APIView):
 
     def post(self, request,tid):
         snippet = self.get_object(tid)
-        print(snippet.sending_account)
-        if snippet.sending_account.owner == request.user and (not snippet.approved or snippet.standing_order):
+        print(snippet.iban_sender)
+        if snippet.iban_sender.owner == request.user and (not snippet.approved or snippet.standing_order):
             snippet.delete()
         else:
             return Response(status=status.HTTP_403_FORBIDDEN)
