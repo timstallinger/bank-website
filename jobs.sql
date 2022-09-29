@@ -271,3 +271,4 @@ INSERT INTO pgagent.pga_schedule(
 ) RETURNING jscid INTO scid;
 END
 $$;
+
