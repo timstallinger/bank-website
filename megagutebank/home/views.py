@@ -18,11 +18,6 @@ from .forms import SignUpForm, KontoForm, UberweisungForm, TagesgeldForm, Kuendi
 
 from datetime import date
 
-#TODO: Bankdaten automatisch laden
-#TODO: abgelehnter User kann sich nicht anmelden
-#TODO: Transaktionen bestätigen (Employee)?
-#TODO: Employee automatisch erstellen
-
 def manage(request):
     if request.user.is_authenticated and request.user.is_staff:
         if request.POST.get("button_declined"):
