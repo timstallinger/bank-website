@@ -156,10 +156,9 @@ def konto_uberweisen(request):
         form = UberweisungForm(request.user, request.POST)
         if form.is_valid():
             suc = form.save(request)
-            if suc == 0:
+            if type(suc) == str:
                 accounts = Account.objects.filter(owner=request.user)
-                return render(request, 'konto_uberweisen.html', {'form': form, 'accounts': accounts, 'checked': False, 'error': "Ihr Konto ist nicht ausreichend gedeckt!"})
-
+                return render(request, 'konto_uberweisen.html', {'form': form, 'accounts': accounts, 'checked': False, 'error': suc})
             else:
                 return redirect('/accounts/transactions/detail/' + str(suc.id))
         else:

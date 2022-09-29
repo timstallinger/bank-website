@@ -308,7 +308,7 @@ class UberweisungForm(ModelForm):
 
         if iban_sender.amount + iban_sender.overdraft < transaction.amount:
             # Falls Konto nicht ausreichend gedeckt ist, abbrechen
-            return 0
+            return "Ihr Konto ist nicht ausreichend gedeckt."
         iban_sender.amount -= float(transaction.amount)
 
         # Wenn das Zielkonto auf unserer Datenbank existiert, bekommt der Empfänger das Geld
@@ -320,11 +320,11 @@ class UberweisungForm(ModelForm):
         receiver.amount += float(transaction.amount)
 
         # check transfer from savings account
-        '''if iban_sender.type == 0:
-            possible_accounts = Account.objects.filter(owner=iban_sender.owner, type=1)
+        if iban_sender.type == 0:
+            possible_accounts = Account.objects.filter(owner=iban_sender.owner)
             if receiver not in possible_accounts:
                 commit = False
-                return 0'''
+                return "Sie können von einem Sparkonto nur auf eigene Konten überweisen."
 
         if commit:
             transaction.save()
