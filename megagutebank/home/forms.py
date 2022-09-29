@@ -65,13 +65,15 @@ class SignUpForm(UserCreationForm):
             }))
     class Meta:
         model = Person
-        fields = ('vorname', 'nachname', 'email', 'phone', 'username', 'birthday', 'password1', 'password2', )
+        fields = ('vorname', 'nachname', 'email', 'phone','username', 'birthday', 'password1', 'password2', )
 
     def save(self, commit=True):
         user = super(SignUpForm, self).save(commit=False)
         user.first_name = self.cleaned_data["vorname"]
         user.last_name = self.cleaned_data["nachname"]
         user.email = self.cleaned_data["email"]
+        user.address = self.cleaned_data["email"]
+        user.phone_number = self.cleaned_data["phone"]
         check_user = self.cleaned_data["username"]
         check_user = Person.objects.filter(username=check_user)
         if check_user.exists():
