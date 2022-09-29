@@ -79,6 +79,27 @@ class SignUpForm(UserCreationForm):
         if check_user.exists():
             raise forms.ValidationError("Dieser Username ist bereits vergeben.")
         user.confirmed = False
+
+        # Generate iBan for Girokonto
+        blz_fill = 100100500000000000
+        account_nr = random.randint(1, 9999999999)
+        temp_iban = blz_fill + account_nr
+        checksum = 98 - (int(str(temp_iban) + str(131400)) % 97)
+
+        if checksum < 10:
+            iban = f"DE{checksum}{temp_iban}"
+        else:
+            iban = f"DE{checksum}{temp_iban}"
+        
+        # Create Giro Account for user
+        giro_account = Account()
+        giro_account.name = "Girokonto für " + user.first_name + " " + user.last_name
+        giro_account.iban = iban
+        giro_account.owner = user
+        giro_account.account_type = 1
+        giro_account.balance = 0
+        giro_account.save()
+
         if commit:
             user.save()
         return user
@@ -159,7 +180,7 @@ class KontoForm(ModelForm):
         konto.amount = 0
         konto.interestrate = 0
         # generate valid iban
-        konto.iban = self.cleaned_data["konto_standort"] + str(10010005) + str(random.randint(1000000000, 9999999999))
+        konto.iban = self.gen_iban(self.cleaned_data["konto_standort"])
 
         self.gen_iban(self.cleaned_data["konto_standort"])
 
@@ -169,7 +190,7 @@ class KontoForm(ModelForm):
         if konto.type == 0:
             konto.interest = 0.0365
             konto.negative_interest = 0.073
-        elif konto.type == 1:
+        elif konto.type == 2:
             if konto.time_period == 1:
                 konto.interest = 0.050
             if konto.time_period == 3:
