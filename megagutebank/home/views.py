@@ -18,10 +18,10 @@ from .forms import SignUpForm, KontoForm, UberweisungForm, TagesgeldForm, Kuendi
 
 from datetime import date
 
-#TODO: Bankdaten automatisch laden
 #TODO: abgelehnter User kann sich nicht anmelden
-#TODO: Transaktionen bestätigen (Employee)?
-#TODO: Employee automatisch erstellen
+#TODO: Karte -> automatisch erstellen beheben
+#TODO: Tagesgeldkonto-Instanz wird auch mit Girokonto erstellt
+#TODO: Profil bearbeiten
 
 def manage(request):
     if request.user.is_authenticated and request.user.is_staff:
@@ -29,7 +29,7 @@ def manage(request):
             D = request.POST.get("button_declined")
             a = Account.objects.get(iban=D)
             a.status = -1
-            a.employee = Employee.objects.get(eid=request.user.id)
+            a.employee = Employee.objects.get(person_id=request.user.id)
             a.save()
         elif request.POST.get("button_approved"):
             D = request.POST.get("button_approved")

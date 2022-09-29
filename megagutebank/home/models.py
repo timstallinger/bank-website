@@ -8,7 +8,7 @@ from django.db.models import CheckConstraint, Q, F
 class Bank(models.Model):
     balance = models.FloatField(default=0)
     profit = models.FloatField(default=0)
-    bic = models.CharField(default="MALADE51KRE", max_length=11, primary_key=1)
+    blz = models.IntegerField(default=100100500000000000, primary_key=1)
     name = models.CharField(default="MGB", max_length=30)
 
 class Person(User):
@@ -20,7 +20,7 @@ class Person(User):
     confirmed = models.IntegerField(default=0)
 
 class Employee(models.Model):
-    eid = models.IntegerField(primary_key=True)
+    eid = models.AutoField(primary_key=True)
     person = models.ForeignKey(Person, on_delete=models.CASCADE)
 
 class Account(models.Model):

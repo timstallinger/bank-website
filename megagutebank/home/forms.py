@@ -8,64 +8,68 @@ import datetime
 
 from .models import Person, Account, TagesgeldAccount, Transaction
 
+
 class SignUpForm(UserCreationForm):
     vorname = forms.CharField(max_length=30, required=True,
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Vornamen eingeben',
-            }))
+                              widget=forms.TextInput(
+                                  attrs={
+                                      'class': 'form-control',
+                                      'placeholder': 'Vornamen eingeben',
+                                  }))
     nachname = forms.CharField(max_length=30, required=True,
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Nachnamen eingeben',
-            }))
+                               widget=forms.TextInput(
+                                   attrs={
+                                       'class': 'form-control',
+                                       'placeholder': 'Nachnamen eingeben',
+                                   }))
     username = forms.CharField(max_length=30, required=True,
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Benutzernamen eingeben',
-            }))
-    email = forms.EmailField(max_length=254, 
-        error_messages={'invalid': 'Bitte geben Sie eine gültige E-Mail-Adresse ein.'},
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'E-Mail Adresse eingeben',
-            }))
+                               widget=forms.TextInput(
+                                   attrs={
+                                       'class': 'form-control',
+                                       'placeholder': 'Benutzernamen eingeben',
+                                   }))
+    email = forms.EmailField(max_length=254,
+                             error_messages={'invalid': 'Bitte geben Sie eine gültige E-Mail-Adresse ein.'},
+                             widget=forms.TextInput(
+                                 attrs={
+                                     'class': 'form-control',
+                                     'placeholder': 'E-Mail Adresse eingeben',
+                                 }))
     phone = forms.CharField(max_length=30, required=True,
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Telefonnummer eingeben',
-            }))
+                            widget=forms.TextInput(
+                                attrs={
+                                    'class': 'form-control',
+                                    'placeholder': 'Telefonnummer eingeben',
+                                }))
     address = forms.CharField(max_length=30, required=True,
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Adresse eingeben',
-            }))
-    birthday = forms.DateField(initial=datetime.date.today, 
-    widget=forms.widgets.DateInput(
-        attrs={
-            'type': 'date', 'class': 'form-control','min': '1900-01-01', 'max': datetime.date.today() - datetime.timedelta(days=18*365)
-            }))
-    password1 = forms.CharField(max_length=30, required=True, help_text='Mindestens 8 Zeichen lang und darf nicht zu einfach sein.',
-        widget=forms.PasswordInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Passwort eingeben',
-            }))
+                              widget=forms.TextInput(
+                                  attrs={
+                                      'class': 'form-control',
+                                      'placeholder': 'Adresse eingeben',
+                                  }))
+    birthday = forms.DateField(initial=datetime.date.today,
+                               widget=forms.widgets.DateInput(
+                                   attrs={
+                                       'type': 'date', 'class': 'form-control', 'min': '1900-01-01',
+                                       'max': datetime.date.today() - datetime.timedelta(days=18 * 365)
+                                   }))
+    password1 = forms.CharField(max_length=30, required=True,
+                                help_text='Mindestens 8 Zeichen lang und darf nicht zu einfach sein.',
+                                widget=forms.PasswordInput(
+                                    attrs={
+                                        'class': 'form-control',
+                                        'placeholder': 'Passwort eingeben',
+                                    }))
     password2 = forms.CharField(max_length=30, required=True,
-        widget=forms.PasswordInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Passwort bestätigen',
-            }))
+                                widget=forms.PasswordInput(
+                                    attrs={
+                                        'class': 'form-control',
+                                        'placeholder': 'Passwort bestätigen',
+                                    }))
+
     class Meta:
         model = Person
-        fields = ('vorname', 'nachname', 'email', 'phone','username', 'birthday', 'password1', 'password2', )
+        fields = ('vorname', 'nachname', 'email', 'phone', 'username', 'birthday', 'password1', 'password2',)
 
     def save(self, commit=True):
         user = super(SignUpForm, self).save(commit=False)
@@ -90,7 +94,7 @@ class SignUpForm(UserCreationForm):
             iban = f"DE{checksum}{temp_iban}"
         else:
             iban = f"DE{checksum}{temp_iban}"
-        
+
         # Create Giro Account for user
         giro_account = Account()
         giro_account.name = "Girokonto für " + user.first_name + " " + user.last_name
@@ -113,55 +117,57 @@ konto_typen = [
     ('sparkonto', 'Sparkonto'),
     ('girokonto', 'Girokonto'),
     ('Tagesgeldkonto', 'Tagesgeldkonto'),
-    ]
+]
 typ_to_int = {
-        'sparkonto': 0,
-        'girokonto': 1,
-        'Tagesgeldkonto': 2,
-    }
+    'sparkonto': 0,
+    'girokonto': 1,
+    'Tagesgeldkonto': 2,
+}
 konto_cntry = [
     ('DE', 'Deutschland'),
     ('CH', 'Schweiz'),
     ('ES', 'Spanien'),
-    ]
+]
 dauerauftrag_options = [
     ('days', 'Tage'),
     ('months', 'Monate'),
     ('years', 'Jahre'),
-    ]
+]
 tagesgeld_options = [
     ('1', '1 Jahr'),
     ('3', '3 Jahre'),
     ('5', '5 Jahre'),
-    ]
+]
+
 
 class KontoForm(ModelForm):
     def __init__(self, user, *args, **kwargs):
         self.user = user
         super(ModelForm, self).__init__(*args, **kwargs)
-    
+
     konto_name = forms.CharField(max_length=30, required=True,
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Kontonamen eingeben',
-            }))
+                                 widget=forms.TextInput(
+                                     attrs={
+                                         'class': 'form-control',
+                                         'placeholder': 'Kontonamen eingeben',
+                                     }))
     konto_typ = forms.CharField(max_length=30, required=True, widget=forms.Select(choices=konto_typen, attrs={
         'class': 'btn btn-primary dropdown-toggle',
     }))
     konto_standort = forms.CharField(max_length=30, required=True, widget=forms.Select(choices=konto_cntry, attrs={
         'class': 'btn btn-primary dropdown-toggle',
     }))
-    tagesgeld_dauer = forms.CharField(max_length=30, required=False, widget=forms.Select(choices=tagesgeld_options, attrs={
-        'class': 'btn btn-primary dropdown-toggle',
-    }))
-    tagesgeld_amount = forms.DecimalField(max_digits=10, decimal_places=2, required=False, 
-        widget=forms.NumberInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Betrag eingeben',
-            }))
-    
+    tagesgeld_dauer = forms.CharField(max_length=30, required=False,
+                                      widget=forms.Select(choices=tagesgeld_options, attrs={
+                                          'class': 'btn btn-primary dropdown-toggle',
+                                      }))
+    tagesgeld_amount = forms.DecimalField(max_digits=10, decimal_places=2, required=False,
+                                          widget=forms.NumberInput(
+                                              attrs={
+                                                  'class': 'form-control',
+                                                  'placeholder': 'Betrag eingeben',
+                                              }))
+
     class Meta:
         model = Account
         fields = ('konto_name', 'konto_standort')
@@ -207,10 +213,12 @@ class KontoForm(ModelForm):
             konto.save()
         return konto
 
+
 class TagesgeldForm(KontoForm):
     class Meta:
         model = TagesgeldAccount
         fields = ('konto_name', 'konto_standort', 'tagesgeld_dauer')
+
     def save(self, commit=True):
         konto = super(TagesgeldForm, self).save(commit=False)
         konto.name = self.cleaned_data["konto_name"]
@@ -239,12 +247,13 @@ class TagesgeldForm(KontoForm):
                 return 0
             giro.amount -= float(konto.amount)
             konto.interest = 0
-        
+
         if commit:
             konto.save()
             if giro:
                 giro.save()
         return konto
+
 
 class UberweisungForm(ModelForm):
     def __init__(self, user, *args, **kwargs):
@@ -253,39 +262,39 @@ class UberweisungForm(ModelForm):
 
     # amount of money to transfer
     betrag = forms.DecimalField(max_digits=10, decimal_places=2, required=True,
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Betrag eingeben',
-            }))
+                                widget=forms.TextInput(
+                                    attrs={
+                                        'class': 'form-control',
+                                        'placeholder': 'Betrag eingeben',
+                                    }))
     betrag.label = 'Betrag in Euro'
     zielkonto = forms.CharField(max_length=30, required=True,
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Zielkonto eingeben',
-            }))
+                                widget=forms.TextInput(
+                                    attrs={
+                                        'class': 'form-control',
+                                        'placeholder': 'Zielkonto eingeben',
+                                    }))
     empfangername = forms.CharField(max_length=30, required=True,
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Empfängername eingeben',
-            }))
-    empfangername.label="Empfängername"
+                                    widget=forms.TextInput(
+                                        attrs={
+                                            'class': 'form-control',
+                                            'placeholder': 'Empfängername eingeben',
+                                        }))
+    empfangername.label = "Empfängername"
     verwendungszweck = forms.CharField(max_length=30, required=True,
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Verwendungszweck eingeben',
-            }))
+                                       widget=forms.TextInput(
+                                           attrs={
+                                               'class': 'form-control',
+                                               'placeholder': 'Verwendungszweck eingeben',
+                                           }))
     dauerauftrag = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={
         'class': 'form-check-input',
         'style': 'margin-top: 30px;',
     }))
     zeit_input = forms.IntegerField(required=False, widget=forms.NumberInput(attrs={
-        'class':"form-control",
+        'class': "form-control",
     }))
-    zeit_input.label="Dauerauftrag Zeitabstand in Tagen"
+    zeit_input.label = "Dauerauftrag Zeitabstand in Tagen"
 
     class Meta:
         model = Transaction
