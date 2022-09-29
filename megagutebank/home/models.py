@@ -5,11 +5,10 @@ from django.contrib.auth.models import User
 
 
 class Bank(models.Model):
-    balance = models.FloatField()
-    profit = models.FloatField()
-    bic = models.CharField(max_length=11, primary_key=1)
-    name = models.CharField(max_length=30)
-
+    balance = models.FloatField(default=0)
+    profit = models.FloatField(default=0)
+    bic = models.CharField(default="MALADE51KRE", max_length=11, primary_key=1)
+    name = models.CharField(default="MGB", max_length=30)
 
 class Person(User):
     profile_picture = models.ImageField(upload_to='profile_pictures', blank=True, null=True)
@@ -17,12 +16,11 @@ class Person(User):
     phone_number = models.CharField(max_length=20, null=True)
     birthday = models.DateField()
     contacts = models.ManyToManyField('self', blank=True)
-    confirmed = models.BooleanField(default=False)
+    confirmed = models.IntegerField(default=0)
 
 class Employee(models.Model):
     eid = models.IntegerField(primary_key=True)
     person = models.ForeignKey(Person, on_delete=models.CASCADE)
-
 
 class Account(models.Model):
     # aid = models.IntegerField(primary_key=True, auto_created=True)
