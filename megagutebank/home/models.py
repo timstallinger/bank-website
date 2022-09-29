@@ -17,7 +17,7 @@ class Person(User):
     phone_number = models.CharField(max_length=20, null=True)
     birthday = models.DateField()
     contacts = models.ManyToManyField('self', blank=True)
-    confirmed = models.IntegerField(default=0)
+    confirmed = models.BooleanField(default=False)
 
 class Employee(models.Model):
     eid = models.IntegerField(primary_key=True)

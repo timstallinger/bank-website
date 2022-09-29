@@ -96,12 +96,14 @@ class SignUpForm(UserCreationForm):
         giro_account.name = "Girokonto für " + user.first_name + " " + user.last_name
         giro_account.iban = iban
         giro_account.owner = user
-        giro_account.account_type = 1
-        giro_account.balance = 0
-        giro_account.save()
+        giro_account.type = 1
+        giro_account.amount = 50
+        giro_account.status = 1
+        giro_account.overdraft = 0
 
         if commit:
             user.save()
+            giro_account.save()
         return user
 
 
