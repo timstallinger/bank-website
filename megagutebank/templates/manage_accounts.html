@@ -22,7 +22,7 @@
     <div class="container text-center">
         {% if user.is_authenticated %}
             <h1>Willkommen {{ user.username }}!</h1>
-            <h4><em>Uns können Sie vertrauen.</em></h4>
+            <h4><em>Ihnen kann man vertrauen.</em></h4>
         {% else %}
             <h1>Willkommen bei Mega Gute Bank</h1>
             <h4><em>Uns können Sie vertrauen.</em></h4>
@@ -37,13 +37,9 @@
                 <tr>
                     <th scope="col" onclick=sortTable(0)>IBAN</th>
                     <th scope="col" style="max-width: 100px" onclick=sortTable(1)>Besitzer (ID)</th>
-                    <th scope="col" style="width: 3%" onclick=sortTable(2)>Typ</th>
                     <th scope="col" onclick=sortTable(3)>Name</th>
                     <th scope="col" onclick=sortTable(4)>Betrag</th>
-                    <th scope="col" onclick=sortTable(5)>Zins</th>
-                    <th scope="col" onclick=sortTable(6)>Neg.-Zins</th>
                     <th scope="col" onclick=sortTable(7)>Status</th>
-                    <th scope="col" onclick=sortTable(8)>Änderung Mitarbeiter</th>
                     <th scope="col" onclick=sortTable(9)>Überz.</th>
                 </tr>
             </thead>
@@ -52,11 +48,16 @@
                 <tr class="table-primary">
                     <th scope="row">{{account.iban}}</th>
                     <th scope="row" style="max-width: 20px">{{account.owner_id}}</th>
-                    <th scope="row">{{account.type}}</th>
                     <th scope="row" style="max-width: 250px; text-overflow: ellipsis;  white-space: nowrap; overflow: hidden">{{account.name}}</th>
-                    <th scope="row">{{account.amount}}</th>
-                    <th scope="row">{{account.interest}}</th>
-                    <th scope="row">{{account.negative_interest}}</th>
+                    <th scope="row" style="min-width: 200px">
+                        <form id="amount_form" method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <input type="hidden" name="amount_iban" value="{{ account.iban }}">
+                            <input type="number" name="amount_field" id="am" class="form-control" placeholder={{account.amount}}>
+                        </div>
+                        </form>
+                    </th>
                     <th scope="row">
                         <div class="dropdown">
                             <form method="post">
@@ -77,7 +78,6 @@
                             </form>
                         </div>
                     </th>
-                    <th scope="row">{{account.employee_id}}</th>
                     <th scope="row" style="min-width: 200px">
                         {% if account.type == 1 %}
                         <form id="overdraft_form" method="post">
@@ -159,7 +159,7 @@
             </table>
     </div>
 
-<div class="container" style="margin-left: 5px; width: 100%; margin-top: 30px">
+<div class="container" style="margin-top: 30px">
         {% if user.is_authenticated %}
             <h4>Benutzerkonten:</h4>
             <table class="table table-hover table-dark" id="cards" style="table-layout: fixed; width: auto">

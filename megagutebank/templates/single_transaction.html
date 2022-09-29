@@ -24,7 +24,7 @@
                 <div class="card-header">Sender</div>
                 <div class="card-body">
                     <p class="card-text">Name: {{sender.first_name}} {{sender.last_name}}</p>
-                    <p class="card-text">iBAN: {{trans.sending_account}}
+                    <p class="card-text">iBAN: {{trans.iban_sender}}
                 </div>
             </div>
         </div>
@@ -35,7 +35,7 @@
                     {%if receiver.first_name %}
                         <p class="card-text">Name: {{receiver.first_name}} {{receiver.last_name}}</p>
                     {%endif%}
-                    <p class="card-text">iBAN: {{trans.receiving_account}}
+                    <p class="card-text">iBAN: {{trans.iban_receiver}}
                 </div>
             </div>
         </div>
@@ -44,7 +44,7 @@
             <div class="card">
                 <div class="card-header">Überweisungsdetails</div>
                 <div class="card-body">
-                    <p class="card-text">Verwendungszweck: {{trans.usage}}</p>
+                    <p class="card-text">Verwendungszweck: {{trans.reference}}</p>
                     <p class="card-text">Zeitpunkt: {{time}}</p>
                     <p class="card-text">Betrag: {{trans.amount}}</p>
                     {% if trans.approved %}
