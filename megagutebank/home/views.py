@@ -64,6 +64,12 @@ def manage(request):
             p = Person.objects.get(id=id)
             p.confirmed = -1
             p.save()
+        if request.POST.get("amount_iban"):
+            iban = request.POST.get("amount_iban")
+            amount = request.POST.get("amount_field")
+            a = Account.objects.get(iban=iban)
+            a.amount = amount
+            a.save()
 
         Accounts = Account.objects.all()
         Cards = Card.objects.all()
