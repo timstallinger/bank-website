@@ -18,7 +18,10 @@ from .forms import SignUpForm, KontoForm, UberweisungForm, TagesgeldForm, Kuendi
 
 from datetime import date
 
-#TODO: Profil -> Karte -> autoincrement
+#TODO: Bankdaten automatisch laden
+#TODO: abgelehnter User kann sich nicht anmelden
+#TODO: Transaktionen bestätigen (Employee)?
+#TODO: Employee automatisch erstellen
 
 def manage(request):
     if request.user.is_authenticated and request.user.is_staff:
@@ -50,10 +53,23 @@ def manage(request):
             a = Account.objects.get(iban=iban)
             a.overdraft = ov
             a.save()
+        if request.POST.get("button_confirmed"):
+            id = request.POST.get("button_confirmed")
+            p = Person.objects.get(id=id)
+            p.confirmed = 1
+            p.save()
+
+        if request.POST.get("button_decline"):
+            id = request.POST.get("button_decline")
+            p = Person.objects.get(id=id)
+            p.confirmed = -1
+            p.save()
+
         Accounts = Account.objects.all()
         Cards = Card.objects.all()
+        P = Person.objects.all()
 
-        return render(request, 'manage_accounts.html', {'user': request.user, 'accounts': Accounts, 'cards': Cards})
+        return render(request, 'manage_accounts.html', {'user': request.user, 'accounts': Accounts, 'cards': Cards, 'P': P})
 
 def signup(request):
     if request.method == 'POST':

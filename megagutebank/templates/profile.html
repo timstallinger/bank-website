@@ -269,7 +269,16 @@
                         {% endif %}
                         <p>Zinsen: {{ account.interest }} % p.a.</p>
                         <p>Negativzinsen: {{ account.negative_interest }} % p.a.</p>
-                        <p>Status: {{account.status}}</p>
+                        <p>
+                            {% if account.status == 0 %}
+                            <p style="color: red">
+                                Status: inaktiv
+                            </p>
+                            {% else %}
+                            <p style="color: limegreen">
+                                Status: aktiv
+                            </p>
+                            {% endif %}
                         {% if account.type == 2 %}
                         {% for t in tagesgeld %}
                         {% if t.iban == account.iban %}
