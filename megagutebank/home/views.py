@@ -29,7 +29,7 @@ def manage(request):
             D = request.POST.get("button_declined")
             a = Account.objects.get(iban=D)
             a.status = -1
-            a.employee = Employee.objects.get(person_id=request.user.id)
+            a.employee = Employee.objects.get(eid=request.user.id)
             a.save()
         elif request.POST.get("button_approved"):
             D = request.POST.get("button_approved")
