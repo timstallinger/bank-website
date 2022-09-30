@@ -27,6 +27,8 @@ from datetime import date
 
 #TODO: Profil bearbeiten
 
+#fix: Karte wird beim Aktualisieren nicht erneut erstellt
+
 def manage(request):
     if request.user.is_authenticated and (request.user.is_staff or request.user.is_superuser):
         if request.POST.get("button_declined"):
@@ -133,6 +135,7 @@ def profile_data(request):
                 expiration_date=date.today() + datetime.timedelta(days=1826.2125), # 5 years
                 account=Acc
             )
+
 
     c = Card.objects.all()
     u = request.user

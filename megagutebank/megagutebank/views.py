@@ -4,6 +4,8 @@ from django.shortcuts import render, redirect
 
 from home.models import Bank, Account, TagesgeldAccount, Employee, Person, User
 
+# fix: Person und Employee wird beim Login des Superusers erstellt
+
 def index(request):
     kontostand = 0
     # sum up all accounts of the user
