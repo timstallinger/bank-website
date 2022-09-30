@@ -22,6 +22,17 @@ INSERT INTO pgagent.pga_jobstep (
     'UPDATE home_tagesgeldaccount
 SET time_period = time_period - 1, time_of_creation + interval ''1 year'', interest_amount = interest_amount + (interest_amount + amount) * interest
 WHERE time_of_creation <= now() - interval ''1 year'' and status = 1;'::text, ''::text
+) ;-- Inserting a step (jobid: NULL)
+INSERT INTO pgagent.pga_jobstep (
+    jstjobid, jstname, jstenabled, jstkind,
+    jstconnstr, jstdbname, jstonerror,
+    jstcode, jstdesc
+) VALUES (
+    jid, 'cd_status'::text, true, 's'::character(1),
+    ''::text, 'postgres'::name, 'f'::character(1),
+    'UPDATE home_tagesgeldaccount
+SET status = 0
+WHERE time_period <= 0;'::text, ''::text
 ) ;
 
 -- Schedules
@@ -45,6 +56,8 @@ INSERT INTO pgagent.pga_schedule(
 ) RETURNING jscid INTO scid;
 END
 $$;
+
+
 
 DO $$
 DECLARE
