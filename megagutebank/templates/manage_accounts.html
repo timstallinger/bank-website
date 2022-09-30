@@ -36,7 +36,6 @@
             <thead>
                 <tr>
                     <th scope="col" onclick=sortTable(0)>IBAN</th>
-                    <th scope="col" style="max-width: 100px" onclick=sortTable(1)>Besitzer (ID)</th>
                     <th scope="col" onclick=sortTable(3)>Name</th>
                     <th scope="col" onclick=sortTable(4)>Betrag</th>
                     <th scope="col" onclick=sortTable(7)>Status</th>
@@ -47,7 +46,6 @@
             {% for account in accounts %}
                 <tr class="table-primary">
                     <th scope="row">{{account.iban}}</th>
-                    <th scope="row" style="max-width: 20px">{{account.owner_id}}</th>
                     <th scope="row" style="max-width: 250px; text-overflow: ellipsis;  white-space: nowrap; overflow: hidden">{{account.name}}</th>
                     <th scope="row" style="min-width: 200px">
                         <form id="amount_form" method="post">
