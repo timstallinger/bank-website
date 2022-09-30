@@ -100,7 +100,7 @@ def signup(request):
     return render(request, 'register.html', {'form': form})
 
 def konto_create(request):
-    if request.user.is_authenticated:
+    if request.user.is_staff:
         return redirect('/accounts/profile/')
     if not (request.user.is_authenticated and request.user.person.confirmed):
         return render(request, 'error.html', {'error': 'Sie sind nicht angemeldet oder Ihre Konto wurde noch nicht bestätigt.'})
