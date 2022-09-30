@@ -41,18 +41,35 @@ class SignUpForm(UserCreationForm):
                                     'class': 'form-control',
                                     'placeholder': 'Telefonnummer eingeben',
                                 }))
-    address = forms.CharField(max_length=30, required=True,
+    phone.label = "Telefonnummer"
+    address_plz = forms.IntegerField(required=True,
+                                        widget=forms.TextInput(
+                                            attrs={
+                                                'class': 'form-control',
+                                                'placeholder': 'Postleitzahl eingeben',
+                                            }))
+    address_plz.label = "Postleitzahl"
+    address_city = forms.CharField(max_length=30, required=True,
                               widget=forms.TextInput(
                                   attrs={
                                       'class': 'form-control',
-                                      'placeholder': 'Adresse eingeben',
+                                      'placeholder': 'Stadt eingeben',
                                   }))
+    address_city.label = "Stadt"
+    address_street = forms.CharField(max_length=30, required=True,
+                                widget=forms.TextInput(
+                                    attrs={
+                                        'class': 'form-control',
+                                        'placeholder': 'Straße eingeben',
+                                    }))
+    address_street.label = "Straße"
     birthday = forms.DateField(initial=datetime.date.today,
                                widget=forms.widgets.DateInput(
                                    attrs={
                                        'type': 'date', 'class': 'form-control', 'min': '1900-01-01',
                                        'max': datetime.date.today() - datetime.timedelta(days=18 * 365)
                                    }))
+    birthday.label = "Geburtsdatum"
     password1 = forms.CharField(max_length=30, required=True,
                                 help_text='Mindestens 8 Zeichen lang und darf nicht zu einfach sein.',
                                 widget=forms.PasswordInput(
@@ -60,12 +77,14 @@ class SignUpForm(UserCreationForm):
                                         'class': 'form-control',
                                         'placeholder': 'Passwort eingeben',
                                     }))
+    password1.label = "Passwort"
     password2 = forms.CharField(max_length=30, required=True,
                                 widget=forms.PasswordInput(
                                     attrs={
                                         'class': 'form-control',
                                         'placeholder': 'Passwort bestätigen',
                                     }))
+    password2.label = "Passwort bestätigen"
 
     class Meta:
         model = Person
@@ -76,7 +95,9 @@ class SignUpForm(UserCreationForm):
         user.first_name = self.cleaned_data["vorname"]
         user.last_name = self.cleaned_data["nachname"]
         user.email = self.cleaned_data["email"]
-        user.address = self.cleaned_data["email"]
+        user.address_plz = self.cleaned_data["address_plz"]
+        user.address_city = self.cleaned_data["address_city"]
+        user.address_street = self.cleaned_data["address_street"]
         user.phone_number = self.cleaned_data["phone"]
         check_user = self.cleaned_data["username"]
         check_user = Person.objects.filter(username=check_user)
