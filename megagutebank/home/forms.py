@@ -308,7 +308,7 @@ class UberweisungForm(ModelForm):
         transaction.amount = self.cleaned_data["betrag"]
         if transaction.amount <= 0:
             return "Sie können keinen negativen Betrag überweisen."
-        transaction.reference = self.cleaned_data["verwendungszweck"]
+        transaction.reference = request.POST.dict().get("verwendungszweck")
         transaction.iban_sender = iban_sender
         transaction.iban_receiver = self.cleaned_data["zielkonto"]
         transaction.name_receiver = self.cleaned_data["empfangername"]
@@ -316,7 +316,7 @@ class UberweisungForm(ModelForm):
         transaction.timestamp = timezone.now()
         if transaction.standing_order:
             transaction.standing_order_days = self.cleaned_data["zeit_input"]
-
+        transaction.approved = True
         if iban_sender.amount + iban_sender.overdraft < transaction.amount:
             # Falls Konto nicht ausreichend gedeckt ist, abbrechen
             return "Ihr Konto ist nicht ausreichend gedeckt."
