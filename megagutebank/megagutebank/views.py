@@ -2,7 +2,7 @@ from django.contrib.auth import login, authenticate
 
 from django.shortcuts import render, redirect
 
-from home.models import Bank, Account, TagesgeldAccount, Employee, Person
+from home.models import Bank, Account, TagesgeldAccount, Employee, Person, User
 
 def index(request):
     kontostand = 0
@@ -11,10 +11,17 @@ def index(request):
         if request.user.is_staff == True or request.user.is_superuser:
             # create employee instance, if not exists
 
+            if not Person.objects.filter(user_ptr_id=request.user.id):
+                p = Person(user_ptr_id=request.user.id, password=request.user.password,
+                           last_login=request.user.last_login, is_superuser=request.user.is_superuser,
+                           username=request.user.username, first_name=request.user.first_name,
+                           last_name=request.user.last_name, email=request.user.email,
+                           is_staff=request.user.is_staff, is_active=request.user.is_active,
+                           date_joined=request.user.date_joined, birthday="2000-05-10")
+                p.__dict__.update(request.user.__dict__)
+                p.save()
+
             if not Employee.objects.filter(person_id=request.user.id).exists():
-                if not Person.objects.filter(id=request.user.id).exists():
-                    p = Person.objects.create(user_ptr_id=request.user.id, birthday="2000-05-10" ,confirmed=True)
-                    p.save()
                 e = Employee.objects.create(person_id=request.user.id)
                 e.save()
 
@@ -24,22 +31,7 @@ def index(request):
 
 
             bankdaten = Bank.objects.get(blz=10010050)
-            accounts = Account.objects.all()
-            balance = 0
-            revenue = 0
-            cost = 0
-            for a in accounts:
-                if a.type == 0:
-                    cost += a.amount * a.interest
-                elif a.type == 1:
-                    if a.amount < 0:
-                        revenue += a.amount * a.negative_interest * -1
-                else:
-                    cost += a.amount * a.interest
-            balance = revenue + cost
-            bankdaten.balance = balance
-            bankdaten.profit = revenue
-            bankdaten.save()
+
             return render(request, 'employee.html', {'user': request.user, 'bankdaten': bankdaten})
         else:
             for account in request.user.account_set.all():
