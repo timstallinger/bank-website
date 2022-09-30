@@ -306,6 +306,8 @@ class UberweisungForm(ModelForm):
 
         transaction = super(UberweisungForm, self).save(commit=False)
         transaction.amount = self.cleaned_data["betrag"]
+        if transaction.amount <= 0:
+            return "Sie können keinen negativen Betrag überweisen."
         transaction.reference = self.cleaned_data["verwendungszweck"]
         transaction.iban_sender = iban_sender
         transaction.iban_receiver = self.cleaned_data["zielkonto"]

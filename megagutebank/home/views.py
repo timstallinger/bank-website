@@ -113,7 +113,7 @@ def konto_create(request):
 
 def profile_data(request):
     if not (request.user.is_authenticated):
-        return render(request, 'error.html', {'error': 'Sie sind nicht angemeldet oder Ihre Konto wurde noch nicht bestätigt.'})
+        return render(request, 'error.html', {'error': 'Sie sind nicht angemeldet.'})
     if request.GET.get('create_card'):
         i = request.GET.get('create_card')
         Acc = Account.objects.get(iban=i)
@@ -143,6 +143,7 @@ def profile_data(request):
     for acc in a:
         acc.interest *= 100
         acc.negative_interest *= 100
+        acc.amount = round(acc.amount, 2)
 
     T = TagesgeldAccount.objects.filter(type=2)
 
@@ -156,7 +157,9 @@ def konto_uberweisen(request):
         form = UberweisungForm(request.user, request.POST)
         if form.is_valid():
             suc = form.save(request)
-            if suc == 0:
+            if type(suc) == str:
+                return render(request, 'konto_uberweisen.html', {'form': form, 'error': suc})
+            elif suc == 0:
                 accounts = Account.objects.filter(owner=request.user)
                 return render(request, 'konto_uberweisen.html', {'form': form, 'accounts': accounts, 'checked': False, 'error': "Ihr Konto ist nicht ausreichend gedeckt!"})
 
@@ -257,6 +260,9 @@ class TransactionApiView(APIView):
             transactions = paginator.page(1)
         except EmptyPage:
             transactions = paginator.page(paginator.num_pages)
+        # round startbilance and endbalance to 2 decimal places
+        start_balance = round(start_balance, 2)
+        end_balance = round(end_balance, 2)
         return Response({'trans': transactions, 'startDate': startDate, 'endDate': endDate,'argstr':argstr, 'startBalance':start_balance, 'endBalance':end_balance})
         # return Response(serializer.data, status=status.HTTP_200_OK)
     
