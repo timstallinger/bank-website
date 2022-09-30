@@ -36,6 +36,19 @@ class Account(models.Model):
     employee = models.ForeignKey(Employee, default=None, on_delete=models.DO_NOTHING, blank=True, null=True)
     overdraft = models.FloatField(default=0)
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        over = float(self.overdraft) + float(self.amount)
+        if over < 0:
+            # Rollback
+            raise ValueError("Overdraft limit exceeded")
+    class Meta:
+        # check that amount + overdraft >= 0
+        constraints = [
+            CheckConstraint(check=Q(amount__gte=0), name='amount_positive'),
+            CheckConstraint(check=Q(overdraft__gte=0), name='overdraft_positive'),
+        ]
+
 class TagesgeldAccount(Account):
     time_period = models.IntegerField(default=0)
 
