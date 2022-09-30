@@ -273,7 +273,6 @@ class TagesgeldForm(KontoForm):
                 return 0
             giro.amount -= float(konto.amount)
             konto.interest = 0
-
         if commit:
             konto.save()
             if giro:
@@ -393,7 +392,7 @@ class KuendigungForm(ModelForm):
 
     def save(self, request, commit=True):
         iban_sender = request.POST.dict().get("senderkonto")
-        iban_sender = Account.objects.get(pk=iban_sender)
+        iban_sender = TagesgeldAccount.objects.get(pk=iban_sender)
 
         transaction = super(KuendigungForm, self).save(commit=False)
         transaction.amount = iban_sender.amount
@@ -425,7 +424,6 @@ class KuendigungForm(ModelForm):
 
         # check if cancelation of cd_account
         if iban_sender.type == 2:
-
             # cancelation only possible if transaction account exists to send money to
             possible_accounts = Account.objects.filter(owner=iban_sender.owner, type=1)
             if receiver not in possible_accounts:
