@@ -47,7 +47,6 @@ class Account(models.Model):
     class Meta:
         # check that amount + overdraft >= 0
         constraints = [
-            CheckConstraint(check=Q(amount__gte=0), name='amount_positive'),
             CheckConstraint(check=Q(overdraft__gte=0), name='overdraft_positive'),
         ]
 

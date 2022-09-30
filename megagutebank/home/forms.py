@@ -259,6 +259,7 @@ class TagesgeldForm(KontoForm):
         konto.type = typ_to_int[self.cleaned_data["konto_typ"]]
         konto.source = request.POST.dict().get("tagesgeld_source")
         konto.owner = self.user
+        konto.status = 1
         giro = None
         if konto.type == 0:
             konto.interest = 0.0365
