@@ -402,7 +402,6 @@ class KuendigungForm(ModelForm):
         transaction.standing_order = 0
         transaction.timestamp = timezone.now()
 
-        iban_sender.amount -= float(transaction.amount)
         iban_sender.status = 0
 
         # Wenn das Zielkonto auf unserer Datenbank existiert, bekommt der Empfänger das Geld
@@ -411,7 +410,16 @@ class KuendigungForm(ModelForm):
             receiver = Account.objects.get(iban=transaction.iban_receiver)
         except Account.DoesNotExist:
             receiver = iban_sender
+
+        iban_sender.amount -= float(transaction.amount)
         receiver.amount += float(transaction.amount)
+        # wenn dauer des cd_accounts erfuellt wurde -> interest mit ausschütten
+        if iban_sender.time_period <= 0:
+            transaction.amount += iban_sender.interest_amount
+            receiver.amount += iban_sender.interest_amount
+            iban_sender.interest_amount = 0
+
+
 
         # check if cancelation of cd_account
         if iban_sender.type == 2:
