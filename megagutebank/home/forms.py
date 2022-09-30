@@ -185,11 +185,11 @@ class KontoForm(ModelForm):
                                           'class': 'btn btn-primary dropdown-toggle',
                                       }))
     tagesgeld_amount = forms.DecimalField(max_digits=10, decimal_places=2, required=False,
-                                          widget=forms.NumberInput(
-                                              attrs={
-                                                  'class': 'form-control',
-                                                  'placeholder': 'Betrag eingeben',
-                                              }))
+                                        widget=forms.NumberInput(
+                                            attrs={
+                                                'class': 'form-control',
+                                                'placeholder': 'Betrag eingeben',
+                                            }))
 
     class Meta:
         model = Account
@@ -243,7 +243,7 @@ class TagesgeldForm(KontoForm):
         model = TagesgeldAccount
         fields = ('konto_name', 'konto_standort', 'tagesgeld_dauer')
 
-    def save(self, commit=True):
+    def save(self, request, commit=True):
         konto = super(TagesgeldForm, self).save(commit=False)
         konto.name = self.cleaned_data["konto_name"]
         amount = self.cleaned_data["tagesgeld_amount"]
@@ -257,6 +257,7 @@ class TagesgeldForm(KontoForm):
         konto.iban = self.gen_iban(self.cleaned_data["konto_standort"])
 
         konto.type = typ_to_int[self.cleaned_data["konto_typ"]]
+        konto.source = request.POST.dict().get("tagesgeld_source")
         konto.owner = self.user
         giro = None
         if konto.type == 0:
@@ -265,8 +266,9 @@ class TagesgeldForm(KontoForm):
         elif konto.type == 1:
             konto.interest = 0
         elif konto.type == 2:
-            # Tagesgeldkonto
-            giro = Account.objects.get(owner=self.user, type=1)
+            # get one giro account
+            giro = request.POST.dict().get("tagesgeld_source")
+            giro = Account.objects.get(pk=giro)
             if giro.amount < konto.amount:
                 return 0
             giro.amount -= float(konto.amount)
