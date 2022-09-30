@@ -89,8 +89,6 @@
             <th scope="col" onclick="sortTable(2)">Zielkonto</th>
             <th scope="col" onclick="sortTable(3)">Zweck</th>
             <th scope="col" onclick="sortTable(4)">Betrag</th>
-            <th scope="col" onclick="sortTable(5)">Dauerauftrag</th>
-            <th scope="col" onclick="sortTable(6)">Bestätigt</th>
             <th scope="col" onclick="sortTable(7)">Details</th>
           </tr>
         </thead>
@@ -106,8 +104,6 @@
             {%else%}
             <th scope="row" class="text-success">{{trans.amount}}</th>
             {%endif%}
-            <th scope="row">{{trans.standing_order}}</th>
-            <th scope="row">{{trans.approved}}</th>
             <!--edit button-->
             <th scope="row">
               <a href="/accounts/transactions/detail/{{trans.id}}"

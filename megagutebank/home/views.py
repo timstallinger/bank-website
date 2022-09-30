@@ -18,16 +18,10 @@ from .forms import SignUpForm, KontoForm, UberweisungForm, TagesgeldForm, Kuendi
 
 from datetime import date
 
-#TODO: Überweisungen gehen nicht?
 #TODO: Zinsen falsch
-#TODO: Tagesgeldkonto-Instanz wird auch mit Girokonto erstellt
-
-#TODO: abgelehnter User kann sich nicht anmelden
-#TODO: Mitarbeiter darf kein Konto erstellen
 
 #TODO: Profil bearbeiten
 
-#fix: Karte wird beim Aktualisieren nicht erneut erstellt
 
 def manage(request):
     if request.user.is_authenticated and (request.user.is_staff or request.user.is_superuser):
@@ -161,7 +155,6 @@ def profile_data(request):
 
     return render(request, 'profile.html', {'user': u, 'person': p, 'accounts': a, 'cards': c, 'list': L, 'tagesgeld': T})
 
-
 def konto_uberweisen(request):
     if request.user.is_staff:
         return redirect('/accounts/verwalten/')
@@ -189,7 +182,6 @@ def konto_uberweisen(request):
         return redirect('/accounts/konto/erstellen')
     return render(request, 'konto_uberweisen.html', {'form': form, 'accounts': accounts, 'checked': False})
 
-
 def konto_kuendigen(request):
     if not (request.user.is_authenticated and request.user.person.confirmed):
         return render(request, 'error.html', {'error': 'Sie sind nicht angemeldet oder Ihre Konto wurde noch nicht bestätigt.'})
@@ -206,25 +198,6 @@ def konto_kuendigen(request):
     accounts = Account.objects.filter(owner=request.user)
 
     return render(request, 'konto_kuendigen.html', {'form': form, 'accounts': accounts, 'checked': False})
-
-def transactions(request):
-    if request.user.is_staff:
-        return redirect('/accounts/verwalten/')
-    if not (request.user.is_authenticated):
-        return render(request, 'error.html', {'error': 'Sie sind nicht angemeldet oder Ihre Konto wurde noch nicht bestätigt.'})
-    trans = []
-    # get all of users accounts
-    accounts = Account.objects.filter(owner=request.user)
-    # get all transactions of user
-    for account in accounts:
-        for t in Transaction.objects.filter(iban_sender=account):
-            t.amount = -t.amount
-            trans.append(t)
-        for t in Transaction.objects.filter(iban_receiver=account.iban):
-            trans.append(t)
-    trans.sort(key=lambda x: x.timestamp, reverse=True)
-
-    return render(request, 'standing_transactions.html', {'gesendet': trans})
 
 
 class TransactionApiView(APIView):
@@ -247,6 +220,7 @@ class TransactionApiView(APIView):
         '''
         # TODO: What if only one of the dates is given?
         # TODO: filter by account
+        
         # get time range from request
         startDate = request.GET.get('startDate')
         endDate = request.GET.get('endDate')
