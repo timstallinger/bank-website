@@ -297,7 +297,6 @@ class TransactionApiView(APIView):
         return (start_balance,end_balance)
 
 
-
 class TransactionDetailApiView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     renderer_classes = [TemplateHTMLRenderer]

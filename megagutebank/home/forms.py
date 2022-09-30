@@ -214,6 +214,7 @@ class KontoForm(ModelForm):
         konto.interestrate = 0
         # generate valid iban
         konto.iban = self.gen_iban(self.cleaned_data["konto_standort"])
+        konto.status = 1
 
         konto.type = typ_to_int[self.cleaned_data["konto_typ"]]
         konto.owner = self.user
@@ -221,7 +222,7 @@ class KontoForm(ModelForm):
         if konto.type == 0:
             konto.interest = 0.0365
             konto.negative_interest = 0
-        elif konto.type == 1:
+        if konto.type == 1:
             konto.interest = 0
             konto.negative_interest = 0.073
         elif konto.type == 2:
