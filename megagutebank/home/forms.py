@@ -134,6 +134,7 @@ class SignUpForm(UserCreationForm):
         return user
 
 
+#region dicts
 konto_typen = [
     ('sparkonto', 'Sparkonto'),
     ('girokonto', 'Girokonto'),
@@ -159,6 +160,7 @@ tagesgeld_options = [
     ('3', '3 Jahre'),
     ('5', '5 Jahre'),
 ]
+#endregion
 
 
 class KontoForm(ModelForm):
@@ -324,6 +326,9 @@ class UberweisungForm(ModelForm):
     def save(self, request, commit=True):
         iban_sender = request.POST.dict().get("senderkonto")
         iban_sender = Account.objects.get(pk=iban_sender)
+
+        if iban_sender.status == -1:
+            return "Ihr Konto wurde blockiert."
 
         transaction = super(UberweisungForm, self).save(commit=False)
         transaction.amount = self.cleaned_data["betrag"]
