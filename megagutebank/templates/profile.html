@@ -241,12 +241,12 @@
             {% for account in accounts %}
             <div class="col text-center d-flex justify-content-center" id="col-Konten">
                 <div class="card" id="card-Konten">
-                    <div class="card-header" id="card-header-Konten">
+                    <div class="card-header" id="card-header-Konten" style="height: max-content">
                         <button class="btn btn-link" id="btn-collapse-Konten" data-toggle="collapse" data-target="#collapse{{ forloop.counter }}"  aria-expanded="true" aria-controls="collapse{{ forloop.counter }}">
                             <div class="row justify-content-start" id="row-header-Konten">
                                 <img src="/static/images/{{account.type}}.png" id="logo-Konten">
                                     <div class="col text-start" id="col-card-Konten">
-                                        <h4 id="Account-Name-Konten" style="margin-top: 10px; font-family: 'Product Sans',serif">
+                                        <h4 id="Account-Name-Konten" style="margin-top: 10px; font-family: 'Product Sans', sans-serif">
                                             {{account.name}}</h4>
                                         <p id="IBAN-Konten" style="font-size: 0.8rem">IBAN: {{account.iban}}</p>
                                     </div>
@@ -291,12 +291,12 @@
                         {% endif %}
                         {% if account.type == 1 %}
                         {% if account.iban in list %}
-                        <div style="width: 100%;height:180px;background: #efe3d1;display: flex; justify-content: left; border-radius: 10px">
+                        <div style="width: 100%;height:200px;background: #efe3d1;display: flex; justify-content: left; border-radius: 10px">
                             <img src="{% static 'images/gold-karte.png' %}" style="width: 200px;height: max-content;margin-left: -22px">
                             <h4 style="margin-top: 15px">Ihre Girocard.</h4>
                             {% for card in cards %}
                             {% if card.account_id == account.iban %}
-                            <div class="col" style="width: 300px; height: 200px; margin-top: 50px; margin-left: -205px">
+                            <div class="col" style="width: 300px; height: 200px; margin-top: 50px; margin-left: -225px">
                                 <div style="display: flex; justify-content: left; margin-bottom: -10px">
                                     <img src="{% static 'images/credit_card.png' %}" style="width: 25px;height: max-content">
                                     <p style="margin-left: 5px; margin-top: 2px; font-size: 0.9rem">{{ card.account_id }}</p>

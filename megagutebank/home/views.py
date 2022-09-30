@@ -18,13 +18,19 @@ from .forms import SignUpForm, KontoForm, UberweisungForm, TagesgeldForm, Kuendi
 
 from datetime import date
 
-#TODO: abgelehnter User kann sich nicht anmelden
-#TODO: Karte -> automatisch erstellen beheben
+#TODO: Überweisungen gehen nicht?
+#TODO: Zinsen falsch
 #TODO: Tagesgeldkonto-Instanz wird auch mit Girokonto erstellt
+
+#TODO: abgelehnter User kann sich nicht anmelden
+#TODO: Mitarbeiter darf kein Konto erstellen
+
 #TODO: Profil bearbeiten
 
+#fix: Karte wird beim Aktualisieren nicht erneut erstellt
+
 def manage(request):
-    if request.user.is_authenticated and request.user.is_staff:
+    if request.user.is_authenticated and (request.user.is_staff or request.user.is_superuser):
         if request.POST.get("button_declined"):
             D = request.POST.get("button_declined")
             a = Account.objects.get(iban=D)
@@ -121,13 +127,15 @@ def profile_data(request):
     if request.GET.get('create_card'):
         i = request.GET.get('create_card')
         Acc = Account.objects.get(iban=i)
-        Card.objects.create(
-            cvv = random.randint(100, 999),
-            pin=random.randint(1000, 9999),
-            state=0,
-            expiration_date=date.today() + datetime.timedelta(days=1826.2125), # 5 years
-            account=Acc
-        )
+        if not Card.objects.filter(account=Acc).exists():
+            Card.objects.create(
+                cvv = random.randint(100, 999),
+                pin=random.randint(1000, 9999),
+                state=0,
+                expiration_date=date.today() + datetime.timedelta(days=1826.2125), # 5 years
+                account=Acc
+            )
+
 
     c = Card.objects.all()
     u = request.user
