@@ -7,7 +7,7 @@ BEGIN
 INSERT INTO pgagent.pga_job(
     jobjclid, jobname, jobdesc, jobhostagent, jobenabled
 ) VALUES (
-    1::integer, 'cd_interest'::text, ''::text, ''::text, true
+    1::integer, 'cd_interest_duration'::text, ''::text, ''::text, true
 ) RETURNING jobid INTO jid;
 
 -- Steps
@@ -17,11 +17,22 @@ INSERT INTO pgagent.pga_jobstep (
     jstconnstr, jstdbname, jstonerror,
     jstcode, jstdesc
 ) VALUES (
-    jid, 'cd_interest'::text, true, 's'::character(1),
+    jid, 'cd_interest_duration'::text, true, 's'::character(1),
     ''::text, 'postgres'::name, 'f'::character(1),
-    'UPDATE home_account
-SET amount = amount * interest
-WHERE type = 2;'::text, ''::text
+    'UPDATE home_tagesgeldaccount
+SET time_period = time_period - 1, time_of_creation + interval ''1 year'', interest_amount = interest_amount + (interest_amount + amount) * interest
+WHERE time_of_creation <= now() - interval ''1 year'' and status = 1;'::text, ''::text
+) ;-- Inserting a step (jobid: NULL)
+INSERT INTO pgagent.pga_jobstep (
+    jstjobid, jstname, jstenabled, jstkind,
+    jstconnstr, jstdbname, jstonerror,
+    jstcode, jstdesc
+) VALUES (
+    jid, 'cd_status'::text, true, 's'::character(1),
+    ''::text, 'postgres'::name, 'f'::character(1),
+    'UPDATE home_tagesgeldaccount
+SET status = 0
+WHERE time_period <= 0;'::text, ''::text
 ) ;
 
 -- Schedules
@@ -30,12 +41,12 @@ INSERT INTO pgagent.pga_schedule(
     jscjobid, jscname, jscdesc, jscenabled,
     jscstart,     jscminutes, jschours, jscweekdays, jscmonthdays, jscmonths
 ) VALUES (
-    jid, 'every_minute'::text, ''::text, true,
-    '2022-09-29 08:35:00+02'::timestamp with time zone,
+    jid, 'daily'::text, ''::text, true,
+    '2022-09-30 08:39:00+02'::timestamp with time zone,
     -- Minutes
-    ARRAY[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]::boolean[],
+    ARRAY[true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false]::boolean[],
     -- Hours
-    ARRAY[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]::boolean[],
+    ARRAY[true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false]::boolean[],
     -- Week days
     ARRAY[true,true,true,true,true,true,true]::boolean[],
     -- Month days
@@ -45,6 +56,7 @@ INSERT INTO pgagent.pga_schedule(
 ) RETURNING jscid INTO scid;
 END
 $$;
+
 
 
 DO $$
