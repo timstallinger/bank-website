@@ -20,11 +20,7 @@ INSERT INTO pgagent.pga_jobstep (
     jid, 'cd_interest'::text, true, 's'::character(1),
     ''::text, 'postgres'::name, 'f'::character(1),
     'UPDATE home_account
-(CASE
-	WHEN duration = 1 THEN amount = amount * 1.05
-	WHEN duration = 3 THEN amount = amount * 1.07
- 	WHEN duration = 5 THEN amount = amoint * 1.1
-END)
+SET amount = amount * interest
 WHERE type = 2;'::text, ''::text
 ) ;
 
@@ -49,7 +45,6 @@ INSERT INTO pgagent.pga_schedule(
 ) RETURNING jscid INTO scid;
 END
 $$;
-
 
 
 DO $$
