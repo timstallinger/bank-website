@@ -78,6 +78,8 @@ def manage(request):
         return render(request, 'manage_accounts.html', {'user': request.user, 'accounts': Accounts, 'cards': Cards, 'P': P})
 
 def signup(request):
+    if request.user.is_authenticated:
+        return redirect('/accounts/profile/')
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
@@ -94,6 +96,8 @@ def signup(request):
     return render(request, 'register.html', {'form': form})
 
 def konto_create(request):
+    if request.user.is_authenticated:
+        return redirect('/accounts/profile/')
     if not (request.user.is_authenticated and request.user.person.confirmed):
         return render(request, 'error.html', {'error': 'Sie sind nicht angemeldet oder Ihre Konto wurde noch nicht bestätigt.'})
     if request.method == 'POST':
@@ -151,6 +155,8 @@ def profile_data(request):
 
 
 def konto_uberweisen(request):
+    if request.user.is_staff:
+        return redirect('/accounts/verwalten/')
     if not (request.user.is_authenticated and request.user.person.confirmed):
         return render(request, 'error.html', {'error': 'Sie sind nicht angemeldet oder Ihre Konto wurde noch nicht bestätigt.'})
     if request.method == 'POST':
@@ -194,6 +200,8 @@ def konto_kuendigen(request):
     return render(request, 'konto_kuendigen.html', {'form': form, 'accounts': accounts, 'checked': False})
 
 def transactions(request):
+    if request.user.is_staff:
+        return redirect('/accounts/verwalten/')
     if not (request.user.is_authenticated):
         return render(request, 'error.html', {'error': 'Sie sind nicht angemeldet oder Ihre Konto wurde noch nicht bestätigt.'})
     trans = []
