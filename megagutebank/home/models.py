@@ -53,6 +53,8 @@ class Account(models.Model):
 
 class TagesgeldAccount(Account):
     time_period = models.IntegerField(default=0)
+    interest_amount = models.FloatField
+    time_of_creation = models.DateTimeField(default=timezone.now)
 
 
 class DebitCard(models.Model):
